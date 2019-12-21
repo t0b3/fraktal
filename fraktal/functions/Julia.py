@@ -2,6 +2,7 @@
 class Julia(object):
 
 	def __init__(self):
+		self.center = -1.5 - 1.5j  # use this for Julia set
 		self.zoom = 1
 		self.step = 0.00001
 		self.count = 1
@@ -16,12 +17,12 @@ class Julia(object):
 		}
 		return d
 
-	def draw(self, image, height, width, param: dict):
+	def draw(self, image, param: dict):
 
 		# setting the width, height and zoom
 		# of the image to be created
-		w = width
-		h = height
+		w = image.width
+		h = image.height
 
 		# creating the new image in RGB mode
 		bitmap = image
@@ -49,6 +50,8 @@ class Julia(object):
 				# convert byte to RGB (3 bytes), kinda
 				# magic to get nice colors
 				pix[x, y] = (i << 21) + (i << 10) + i * 8
+
+		# n = iterate_mandelbrot(complex(-0.3, -0.6), c)  # use this for Julia set
 
 		# to display the created fractal
 		return bitmap

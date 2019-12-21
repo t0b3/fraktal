@@ -10,7 +10,7 @@ def press(button):
 		app.stop()
 	else:
 		d = dr()
-		d.mandelbrot2(count=1)
+		d.mandelbrot(count=1)
 
 if __name__ == "__main__":
 	app = gui("Fractal Designer", "500x600")

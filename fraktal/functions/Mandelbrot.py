@@ -1,54 +1,43 @@
-from fraktal.functions.int2color import Int2Color
+from fraktal.functions import Palette
+
 
 class Mandelbrot(object):
 
     def __init__(self):
-        self.center = (2.2, 1.5)       # Use this for Mandelbrot set
-        #self.center = (1.5, 1.5)       # Use this for Julia set
+        self.center = -2.2 - 1.5j  # use this for Mandelbrot set
         self.iterate_max = 1000
-        self.zoom = 1.0
+        self.zoom = 1 / 4.5
+        self.palette = Palette.Palette(self.iterate_max)
 
-    def get_parameters(self):
-        d = {
+    def get_parameters(self) -> dict:
+        return {
             "center": self.center,
             "iterate_max": self.iterate_max,
-            "zoom": self.zoom
+            "zoom": self.zoom,
+            "palette": self.palette
         }
-        return d
 
-    def draw(self, image, height, width, param: dict):
+    def draw(self, image, param: dict):
         self.__read_params__(param)
-        img = image
         d = image.load()
-        scale = self.zoom / (width / 3)
-        int2col = Int2Color(100)
+        step = 1 / self.zoom / image.width
 
-        # Calculate the mandelbrot sequence for the point c with start value z
-        def iterate_mandelbrot(c, z = 0):
-            for n in range(1, self.iterate_max + 1):
-                z = z*z +c
+        # calculate the mandelbrot sequence for the point c with start value z
+        def iterate_mandelbrot(c: complex, z: complex = 0) -> int:
+            for n in range(self.iterate_max):
+                z = z ** 2 + c
                 if abs(z) > 2:
-                    return n
-            return None
+                    return n + 1
+            return 0
 
-        # Draw our image
-        for y in range(1, height):
-            for x in range(1, width):
-                c = complex(x * scale - self.center[0], y * scale - self.center[1])
-
-                n = iterate_mandelbrot(c)            # Use this for Mandelbrot set
-                #n = iterate_mandelbrot(complex(0.3, 0.6), c)  # Use this for Julia set
-
-                if n is None:
-                    v = 1
-                else:
-                    v = n/100.0
-
-                #d.point((x, y), fill = palette[int(v * (self.colors_max-1))])
-                #d[x, y] = palette[int(v * (self.colors_max - 1))]
-                d[x, y] = int2col.int2color(v)
+        # draw fractal image
+        for y in range(image.height):
+            for x in range(image.width):
+                c = self.center + complex(x, y) * step
+                n = iterate_mandelbrot(c)  # use this for Mandelbrot set
+                d[x, y] = self.palette.int2color(n)
         del d
-        return img
+        return image
 
     def __read_params__(self, params):
         try:
@@ -57,4 +46,3 @@ class Mandelbrot(object):
         except TypeError as err:
             print(err)
             raise Exception(str(key) + " has the wrong type!")
-
