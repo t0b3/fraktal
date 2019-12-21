@@ -22,7 +22,7 @@ class Drawing(object):
 		bitmap = Image.new("RGB", (self.width, self.height), "white")
 		for x in range(count):
 			par = {
-				"center": -2.2 -1.5j,
+				"center": 0 + 0j,
 				"iterate_max": 100,
 				"zoom": 1/4.5
 			}

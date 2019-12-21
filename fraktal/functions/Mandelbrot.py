@@ -5,7 +5,7 @@ from fraktal.functions import Palette
 class Mandelbrot(object):
 
     def __init__(self):
-        self.center = -2.2 - 1.5j  # use this for Mandelbrot set
+        self.center = 0 + 0j  # use this for Mandelbrot set
         self.iterate_max = 1000
         self.zoom = 1 / 4.5
         self.palette = Palette.Palette(self.iterate_max)
@@ -32,10 +32,8 @@ class Mandelbrot(object):
             return 0
 
         # draw fractal image
-#        real = np.linspace(self.center.real - 1/2/self.zoom, self.center.real + 1/2/self.zoom, num=image.width, endpoint=False)
-#        imag = np.linspace(self.center.imag - 1/2/self.zoom/(image.width/image.height), self.center.imag + 1/2/self.zoom/(image.width/image.height), num=image.height, endpoint=False)
-        real = np.linspace(self.center.real, self.center.real + 1/self.zoom, num=image.width, endpoint=False)
-        imag = np.linspace(self.center.imag, self.center.imag + 1/self.zoom/(image.width/image.height), num=image.height, endpoint=False)
+        real = np.linspace(self.center.real - 1/2/self.zoom, self.center.real + 1/2/self.zoom, num=image.width, endpoint=False)
+        imag = np.linspace(self.center.imag - 1/2/self.zoom/(image.width/image.height), self.center.imag + 1/2/self.zoom/(image.width/image.height), num=image.height, endpoint=False)
         #print("real: ", real[0], "...", real[-1], " - ", len(real), " > ", real[1]-real[0])
         #print("imag: ", imag[0], "...", imag[-1], " - ", len(imag), " > ", imag[1]-imag[0])
         r, i = np.meshgrid(real, imag, sparse=True)
