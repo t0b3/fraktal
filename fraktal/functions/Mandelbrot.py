@@ -1,3 +1,4 @@
+import numpy as np
 from fraktal.functions import Palette
 
 
@@ -31,13 +32,37 @@ class Mandelbrot(object):
             return 0
 
         # draw fractal image
+#        real = np.linspace(self.center.real - 1/2/self.zoom, self.center.real + 1/2/self.zoom, num=image.width, endpoint=False)
+#        imag = np.linspace(self.center.imag - 1/2/self.zoom/(image.width/image.height), self.center.imag + 1/2/self.zoom/(image.width/image.height), num=image.height, endpoint=False)
+        real = np.linspace(self.center.real, self.center.real + 1/self.zoom, num=image.width, endpoint=False)
+        imag = np.linspace(self.center.imag, self.center.imag + 1/self.zoom/(image.width/image.height), num=image.height, endpoint=False)
+        #print("real: ", real[0], "...", real[-1], " - ", len(real), " > ", real[1]-real[0])
+        #print("imag: ", imag[0], "...", imag[-1], " - ", len(imag), " > ", imag[1]-imag[0])
+        r, i = np.meshgrid(real, imag, sparse=True)
+        C = r + i * 1j
+        #print(C[0,0], "...", C[-1,-1])
+        Z = np.zeros_like(C)
+        T = np.zeros(C.shape)
+        #
+        for k in range(self.iterate_max):
+            M = abs(Z) < 2
+            Z[M] = Z[M] ** 2 + C[M]
+            T[M] = k + 1
+        #print(np.min(T,None))
+        #print(np.max(T,None))
         for y in range(image.height):
             for x in range(image.width):
-                c = self.center + complex(x, y) * step
-                n = iterate_mandelbrot(c)  # use this for Mandelbrot set
-                d[x, y] = self.palette.int2color(n)
+                d[x, y] = self.palette.int2color(int(T[y, x]))
         del d
         return image
+        #######
+        #for y in range(image.height):
+        #    for x in range(image.width):
+        #        c = self.center + complex(x, y) * step
+        #        n = iterate_mandelbrot(c)  # use this for Mandelbrot set
+        #        d[x, y] = self.palette.int2color(n)
+        #del d
+        #return image
 
     def __read_params__(self, params):
         try:
