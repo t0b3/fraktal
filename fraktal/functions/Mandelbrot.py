@@ -1,6 +1,4 @@
-#!/usr/bin/python
-import colorsys
-
+from fraktal.functions.int2color import Int2Color
 
 class Mandelbrot(object):
 
@@ -8,14 +6,12 @@ class Mandelbrot(object):
         self.center = (2.2, 1.5)       # Use this for Mandelbrot set
         #self.center = (1.5, 1.5)       # Use this for Julia set
         self.iterate_max = 1000
-        self.colors_max = 100
         self.zoom = 1.0
 
     def get_parameters(self):
         d = {
             "center": self.center,
             "iterate_max": self.iterate_max,
-            "colors_max": self.colors_max,
             "zoom": self.zoom
         }
         return d
@@ -25,13 +21,7 @@ class Mandelbrot(object):
         img = image
         d = image.load()
         scale = self.zoom / (width / 3)
-
-        # Calculate a tolerable palette
-        palette = [0] * self.colors_max
-        for i in range(1, self.colors_max):
-            f = 1-abs((float(i)/self.colors_max-1)**15)
-            r, g, b = colorsys.hsv_to_rgb(.66+f/3, 1-f/2, f)
-            palette[i] = (int(r*255), int(g*255), int(b*255))
+        int2col = Int2Color(100)
 
         # Calculate the mandelbrot sequence for the point c with start value z
         def iterate_mandelbrot(c, z = 0):
@@ -55,7 +45,8 @@ class Mandelbrot(object):
                     v = n/100.0
 
                 #d.point((x, y), fill = palette[int(v * (self.colors_max-1))])
-                d[x, y] = palette[int(v * (self.colors_max - 1))]
+                #d[x, y] = palette[int(v * (self.colors_max - 1))]
+                d[x, y] = int2col.int2color(v)
         del d
         return img
 
