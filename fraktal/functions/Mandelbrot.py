@@ -5,7 +5,7 @@ from fraktal.functions import Palette
 class Mandelbrot(object):
 
     def __init__(self):
-        self.center = 0 + 0j  # use this for Mandelbrot set
+        self.center = 0 + 0j
         self.iterate_max = 1000
         self.zoom = 1 / 4.5
         self.palette = Palette.Palette(self.iterate_max)
@@ -24,12 +24,21 @@ class Mandelbrot(object):
         step = 1 / self.zoom / image.width
 
         # calculate the mandelbrot sequence for the point c with start value z
-        def iterate_mandelbrot(c: complex, z: complex = 0) -> int:
-            for n in range(self.iterate_max):
-                z = z ** 2 + c
-                if abs(z) > 2:
-                    return n + 1
-            return 0
+        #def iterate_mandelbrot(c: complex, z: complex = 0) -> int:
+        #    for n in range(self.iterate_max):
+        #        z = z ** 2 + c
+        #        if abs(z) > 2:
+        #            return n + 1
+        #    return 0
+        #
+        # draw fractal image
+        #for y in range(image.height):
+        #    for x in range(image.width):
+        #        c = self.center + complex(x, y) * step
+        #        n = iterate_mandelbrot(c)  # use this for Mandelbrot set
+        #        d[x, y] = self.palette.int2color(n)
+        #del d
+        #return image
 
         # draw fractal image
         real = np.linspace(self.center.real - 1/2/self.zoom, self.center.real + 1/2/self.zoom, num=image.width, endpoint=False)
@@ -53,14 +62,6 @@ class Mandelbrot(object):
                 d[x, y] = self.palette.int2color(int(T[y, x]))
         del d
         return image
-        #######
-        #for y in range(image.height):
-        #    for x in range(image.width):
-        #        c = self.center + complex(x, y) * step
-        #        n = iterate_mandelbrot(c)  # use this for Mandelbrot set
-        #        d[x, y] = self.palette.int2color(n)
-        #del d
-        #return image
 
     def __read_params__(self, params):
         try:
