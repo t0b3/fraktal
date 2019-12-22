@@ -1,4 +1,5 @@
 import numpy as np
+from PIL import Image
 from fraktal.functions import Palette
 
 
@@ -20,7 +21,7 @@ class Mandelbrot(object):
 
     def draw(self, image, param: dict):
         self.__read_params__(param)
-        d = image.load()
+        #d = image.load()
         step = 1 / self.zoom / image.width
 
         # calculate the mandelbrot sequence for the point c with start value z
@@ -57,11 +58,16 @@ class Mandelbrot(object):
             T[M] = k + 1
         #print(np.min(T,None))
         #print(np.max(T,None))
-        for y in range(image.height):
-            for x in range(image.width):
-                d[x, y] = self.palette.int2color(int(T[y, x]))
-        del d
-        return image
+        new_image = Image.fromarray(T.astype('uint8'), mode="P")
+        self.palette.get_palette()
+        new_image.putpalette(self.palette.get_palette())
+        #del d
+        return new_image
+        #for y in range(image.height):
+        #    for x in range(image.width):
+        #        d[x, y] = self.palette.int2color(int(T[y, x]))
+        #del d
+        #return image
 
     def __read_params__(self, params):
         try:
