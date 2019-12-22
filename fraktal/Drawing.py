@@ -9,7 +9,7 @@ class Drawing(object):
 		self.width = 1900
 
 #	def mandelbrot(self, save=True, count: int = 1):
-#		bitmap = Image.new("RGB", (self.width, self.height))
+#		bitmap = Image.new("P", (self.width, self.height))
 #		for x in range(count):
 #			m = Julia.Julia()
 #			bitmap = m.draw(bitmap, count=x)
@@ -19,7 +19,7 @@ class Drawing(object):
 #				bitmap.show()
 
 	def mandelbrot(self, save: bool = True, count: int = 1):
-		bitmap = Image.new("RGB", (self.width, self.height))
+		bitmap = Image.new("P", (self.width, self.height))
 		for x in range(count):
 			par = {
 				"center": -0.8 - 0.2j,

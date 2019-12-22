@@ -21,25 +21,27 @@ class Mandelbrot(object):
 
     def draw(self, image, param: dict):
         self.__read_params__(param)
-        step = 1 / self.zoom / image.width
 
-        # draw fractal image
+        # create matrix containing complex plane values
         real = np.linspace(self.center.real - 1/2/self.zoom, self.center.real + 1/2/self.zoom, num=image.width, endpoint=False)
         imag = np.linspace(self.center.imag + 1/2/self.zoom/(image.width/image.height), self.center.imag - 1/2/self.zoom/(image.width/image.height), num=image.height, endpoint=False)
-        #print("real: ", real[0], "...", real[-1], " - ", len(real), " > ", real[1]-real[0])
-        #print("imag: ", imag[0], "...", imag[-1], " - ", len(imag), " > ", imag[1]-imag[0])
         r, i = np.meshgrid(real, imag, sparse=True)
         C = r + i * 1j
-        #print(C[0,0], "...", C[-1,-1])
-        Z = np.zeros_like(C)
-        T = np.zeros(C.shape)
-        #
-        for k in range(self.iterate_max):
-            M = abs(Z) < 2
-            Z[M] = Z[M] ** 2 + C[M]
-            T[M] = k
-        #print(np.min(T,None))
-        #print(np.max(T,None))
+
+        # return mandelbrot set i.e. depth values as matrix
+        def mandelbrot_matrix(C):
+            # init helper matrices
+            Z = np.zeros_like(C)
+            T = np.zeros(C.shape)
+            # calculate fractal image values
+            for k in range(self.iterate_max):
+                M = abs(Z) < 2
+                Z[M] = Z[M] ** 2 + C[M]
+                T[M] = k
+            return T
+
+        T = mandelbrot_matrix(C)
+        # convert values to image
         new_image = Image.fromarray(T.astype('uint8'), mode="P")
         new_image.putpalette(self.palette.get_palette())
         return new_image
