@@ -22,9 +22,9 @@ class Drawing(object):
 		bitmap = Image.new("RGB", (self.width, self.height))
 		for x in range(count):
 			par = {
-				"center": 0 + 0j,
-				"iterate_max": 100,
-				"zoom": 1/4.5
+				"center": -0.8 - 0.2j,
+				"iterate_max": 250,
+				"zoom": 24/4.5
 			}
 			par["palette"] = Palette.Palette(par["iterate_max"])
 			m = Mandelbrot.Mandelbrot()

@@ -43,7 +43,7 @@ class Mandelbrot(object):
 
         # draw fractal image
         real = np.linspace(self.center.real - 1/2/self.zoom, self.center.real + 1/2/self.zoom, num=image.width, endpoint=False)
-        imag = np.linspace(self.center.imag - 1/2/self.zoom/(image.width/image.height), self.center.imag + 1/2/self.zoom/(image.width/image.height), num=image.height, endpoint=False)
+        imag = np.linspace(self.center.imag + 1/2/self.zoom/(image.width/image.height), self.center.imag - 1/2/self.zoom/(image.width/image.height), num=image.height, endpoint=False)
         #print("real: ", real[0], "...", real[-1], " - ", len(real), " > ", real[1]-real[0])
         #print("imag: ", imag[0], "...", imag[-1], " - ", len(imag), " > ", imag[1]-imag[0])
         r, i = np.meshgrid(real, imag, sparse=True)
