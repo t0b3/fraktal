@@ -4,7 +4,7 @@ from fraktal.functions import Palette, Fractal
 
 class Drawing(object):
 
-	def __init__(self, screen_width, screen_height):
+	def __init__(self, screen_width: int, screen_height: int):
 		self.width = screen_width / 2
 		self.height = screen_height
 		self.center = -0.8 - 0.155j
@@ -23,7 +23,7 @@ class Drawing(object):
 		}
 
 	# draw fractal images for selected params
-	def draw(self, save: bool = True, params = None):
+	def draw(self, save: bool = True, params: dict = None):
 
 		# render image tile(s)
 		def render_perspective(par: dict) -> Image.Image:
@@ -128,7 +128,7 @@ class Drawing(object):
 			else:
 				image.show()
 
-	def __read_params__(self, params):
+	def __read_params__(self, params: dict):
 		try:
 			for key, value in params.items():
 				setattr(self, key, value)

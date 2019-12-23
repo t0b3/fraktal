@@ -1,13 +1,15 @@
 import numpy as np
 from PIL import Image
 
-
+# abstract class: DO NOT USE! - use child classes instead
 class Fractal(object):
     def __init__(self):
         self.iterate_max = 100
 
     # return an image based on min-max coordinates, size, iterations, palette
-    def render_image(self, xmin, xmax, width, ymin, ymax, height, iterate_max, palette) -> Image.Image:
+    def render_image(self, xmin: float, xmax: float, width: int,
+                     ymin: float, ymax: float, height: int,
+                     iterate_max: int, palette: list) -> Image.Image:
         # create matrix containing complex plane values
         real = np.linspace(xmin, xmax, num=width, endpoint=False)
         imag = np.linspace(ymax, ymin, num=height, endpoint=False)
@@ -25,7 +27,7 @@ class Fractal(object):
             "iterate_max": self.iterate_max,
         }
 
-    def __read_params__(self, params):
+    def __read_params__(self, params: dict):
         try:
             for key, value in params.items():
                 setattr(self, key, value)
@@ -37,7 +39,7 @@ class Fractal(object):
 class Mandelbrot(Fractal):
 
     # return mandelbrot set i.e. depth values as matrix
-    def fractal_matrix(self, C, param: dict):
+    def fractal_matrix(self, C: np.ndarray, param: dict) -> np.ndarray:
         self.__read_params__(param)
 
         # init helper matrices
@@ -56,7 +58,7 @@ class Julia(Fractal):
         self.c = -0.8+0.155j
 
     # return julia set i.e. depth values as matrix
-    def fractal_matrix(self, Z, param: dict):
+    def fractal_matrix(self, Z: np.ndarray, param: dict) -> np.ndarray:
         self.__read_params__(param)
 
         # init helper matrices
