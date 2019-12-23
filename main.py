@@ -9,8 +9,10 @@ def press(button):
 	if button == "Cancel":
 		app.stop()
 	else:
-		d = dr()
-		d.mandelbrot(count=1)
+		d = dr(screen_width = app.appWindow.winfo_screenwidth(),
+			   screen_height = app.appWindow.winfo_screenheight())
+		d.draw()
+	app.stop()
 
 if __name__ == "__main__":
 	app = gui("Fractal Designer", "500x600")

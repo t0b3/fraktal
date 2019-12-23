@@ -2,9 +2,9 @@ import colorsys
 from typing import List
 
 
-class Palette:
+class Palette(object):
     def __init__(self, colors_max: int = 256):
-        self.colors_max = colors_max
+        self.colors_max = min(colors_max, 256)
 
         # create a tolerable palette in a list
         self.palette: List[int] = []
