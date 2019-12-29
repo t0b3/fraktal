@@ -14,7 +14,12 @@ class Fractal(object):
         imag = np.linspace(ymax, ymin, num=height, endpoint=False, dtype=np.float32) * 1j
         C = np.ravel(real + imag[:, np.newaxis]).astype(np.complex64)
         # calc mandelbrot set
-        T = self.fractal_matrix(C, {"iterate_max": iterate_max})
+        import time
+        start_main = time.time()
+        T = self.calc_fractal(C, {"iterate_max": iterate_max})
+        end_main = time.time()
+        secs = end_main - start_main
+        print(secs)
         # convert values to image
         image: Image.Image = Image.fromarray(T.reshape(height, width).astype('uint8'), mode="P")
         image.putpalette(palette)

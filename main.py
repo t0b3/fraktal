@@ -20,4 +20,5 @@ if __name__ == "__main__":
 	app.setLabelBg("title", "grey")
 	app.addButtons(["Go", "Cancel"], press)
 	# start the GUI
-	app.go()
+	#app.go()
+	press("Go")
