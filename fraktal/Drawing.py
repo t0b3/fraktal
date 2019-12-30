@@ -5,12 +5,13 @@ from fraktal.functions import Palette, Fractal
 class Drawing(object):
 
 	def __init__(self, screen_width: int, screen_height: int):
+		self.BASERANGE_Y = 8.0
 		self.width = int(screen_width / 2)
 		self.height = screen_height
 		self.center = -0.8 - 0.155j
 		#self.c = -0.79+0.135j
 		self.iterate_max = 2560
-		self.zoom = 24 / 4.5
+		self.zoom = 0
 		self.palette = Palette.Palette(self.iterate_max).get_palette()
 		self.fractal = Fractal.Mandelbrot()
 
@@ -30,11 +31,14 @@ class Drawing(object):
 		def render_perspective(par: dict) -> Image.Image:
 			self.__read_params__(par)
 
+			yrange = self.BASERANGE_Y / (2 ** self.zoom)
+			xrange = yrange * (self.width / self.height)
+
 			# calculate rendering parameters i.e. min-max coordinates
-			return self.fractal.render_image(xmin=self.center.real - 1 / 2 / self.zoom,
-											 xmax=self.center.real + 1 / 2 / self.zoom,
-											 ymin=self.center.imag - 1 / 2 / self.zoom / (self.width / self.height),
-											 ymax=self.center.imag + 1 / 2 / self.zoom / (self.width / self.height),
+			return self.fractal.render_image(xmin=self.center.real - xrange / 2,
+											 xmax=self.center.real + xrange / 2,
+											 ymin=self.center.imag - yrange / 2,
+											 ymax=self.center.imag + yrange / 2,
 											 width=self.width,
 											 height=self.height,
 											 iterate_max=self.iterate_max,
@@ -43,23 +47,23 @@ class Drawing(object):
 		# list of default params
 		if params is None:
 			params = list()
-			for i in range(0,14):
-				self.zoom = 2**i / 4.5
+			for i in range(14):
+				self.zoom = i
 				params.append(self.get_parameters())
 
 			self.fractal = Fractal.Julia(c = -0.79+0.135j)
-			for i in range(0,12):
-				self.zoom = 2**i / 4.5
+			for i in range(12):
+				self.zoom = i
 				params.append(self.get_parameters())
 
 			self.fractal = Fractal.Mandelbrot4()
-			for i in range(0,8):
-				self.zoom = 2**i / 4.5
+			for i in range(8):
+				self.zoom = i
 				params.append(self.get_parameters())
 
 			self.fractal = Fractal.Julia4(c = -0.78+0.115j)
-			for i in range(0,8):
-				self.zoom = 2**i / 4.5
+			for i in range(8):
+				self.zoom = i
 				params.append(self.get_parameters())
 
 
