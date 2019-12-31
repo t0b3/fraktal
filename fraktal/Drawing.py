@@ -52,7 +52,8 @@ class Drawing(object):
 				params.append(self.get_parameters())
 
 			self.fractal = Fractal.Julia(c = -0.79+0.135j)
-			for i in range(12):
+			self.center = +0.4938793215408734 - 0.15j
+			for i in range(47):
 				self.zoom = i
 				params.append(self.get_parameters())
 
