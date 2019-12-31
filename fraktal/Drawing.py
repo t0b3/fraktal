@@ -8,7 +8,7 @@ class Drawing(object):
 		self.BASERANGE_Y = 8.0
 		self.width = int(screen_width / 2)
 		self.height = screen_height
-		self.center = -0.8 - 0.155j
+		self.center = -0.8 - 0.1550000000291j
 		#self.c = -0.79+0.135j
 		self.iterate_max = 2560
 		self.zoom = 0
@@ -47,7 +47,7 @@ class Drawing(object):
 		# list of default params
 		if params is None:
 			params = list()
-			for i in range(14):
+			for i in range(47):
 				self.zoom = i
 				params.append(self.get_parameters())
 

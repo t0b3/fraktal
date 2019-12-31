@@ -10,9 +10,9 @@ class Fractal(object):
     def render_image(self, xmin: float, xmax: float, ymin: float, ymax: float, width: int, height: int,
                      iterate_max: int, palette: list) -> Image.Image:
         # create matrix containing complex plane values
-        real = np.linspace(xmin, xmax, num=width, endpoint=False, dtype=np.float32)
-        imag = np.linspace(ymax, ymin, num=height, endpoint=False, dtype=np.float32) * 1j
-        C = np.ravel(real + imag[:, np.newaxis]).astype(np.complex64)
+        real = np.linspace(xmin, xmax, num=width, endpoint=False, dtype=np.float64)
+        imag = np.linspace(ymax, ymin, num=height, endpoint=False, dtype=np.float64) * 1j
+        C = np.ravel(real + imag[:, np.newaxis]).astype(np.complex128)
         # calc mandelbrot set
         import time
         start_main = time.time()
@@ -60,7 +60,7 @@ class Mandelbrot(Fractal):
         prg = cl.Program(ctx, """//CL//
         #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
         #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-        __kernel void mandelbrot(__global float2 *q,
+        __kernel void mandelbrot(__global double2 *q,
                          __global uint *output, uint const maxiter)
         {
             int gid = get_global_id(0);
@@ -96,7 +96,7 @@ class Mandelbrot(Fractal):
         self.__read_params__(param)
 
         # init helper matrices
-        Z = np.zeros_like(q, np.complex64)
+        Z = np.zeros_like(q, np.complex128)
         T = np.zeros(q.shape, np.uint32)
         # calculate fractal image values
         for k in range(self.iterate_max):
@@ -133,8 +133,8 @@ class Julia(Fractal):
         prg = cl.Program(ctx, """//CL//
         #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
         #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-        __kernel void julia(__global float2 *q,
-                         __global uint *output, uint const maxiter, float2 const c)
+        __kernel void julia(__global double2 *q,
+                         __global uint *output, uint const maxiter, double2 const c)
         {
             int gid = get_global_id(0);
             double nreal, real = q[gid].x;
@@ -157,7 +157,7 @@ class Julia(Fractal):
         """).build()
 
         prg.julia(queue, output.shape, None, q_opencl,
-                       output_opencl, np.uint32(self.iterate_max), np.complex64(self.c))
+                       output_opencl, np.uint32(self.iterate_max), np.complex128(self.c))
 
         cl.enqueue_copy(queue, output, output_opencl).wait()
 
@@ -170,7 +170,7 @@ class Julia(Fractal):
 
         # init helper matrices
         T = np.zeros(Z.shape, np.uint32)
-        c = np.complex64(self.c)
+        c = np.complex128(self.c)
         # calculate fractal image values
         for k in range(self.iterate_max):
             M = abs(Z) < 2
@@ -208,7 +208,7 @@ class Mandelbrot4(Fractal):
         prg = cl.Program(ctx, """//CL//
         #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
         #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-        __kernel void mandelbrot(__global float2 *q,
+        __kernel void mandelbrot(__global double2 *q,
                          __global uint *output, uint const maxiter)
         {
             int gid = get_global_id(0);
@@ -248,7 +248,7 @@ class Mandelbrot4(Fractal):
         self.__read_params__(param)
 
         # init helper matrices
-        Z = np.zeros_like(q, np.complex64)
+        Z = np.zeros_like(q, np.complex128)
         T = np.zeros(q.shape, np.uint32)
         # calculate fractal image values
         for k in range(self.iterate_max):
@@ -286,8 +286,8 @@ class Julia4(Fractal):
         prg = cl.Program(ctx, """//CL//
         #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
         #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-        __kernel void julia(__global float2 *q,
-                         __global uint *output, uint const maxiter, float2 const c)
+        __kernel void julia(__global double2 *q,
+                         __global uint *output, uint const maxiter, double2 const c)
         {
             int gid = get_global_id(0);
             double nreal, real = q[gid].x;
@@ -313,7 +313,7 @@ class Julia4(Fractal):
         """).build()
 
         prg.julia(queue, output.shape, None, q_opencl,
-                  output_opencl, np.uint32(self.iterate_max), np.complex64(self.c))
+                  output_opencl, np.uint32(self.iterate_max), np.complex128(self.c))
 
         cl.enqueue_copy(queue, output, output_opencl).wait()
 
@@ -327,7 +327,7 @@ class Julia4(Fractal):
 
         # init helper matrices
         T = np.zeros(Z.shape, np.uint32)
-        c = np.complex64(self.c)
+        c = np.complex128(self.c)
         # calculate fractal image values
         for k in range(self.iterate_max):
             M = abs(Z) < 2
