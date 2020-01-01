@@ -1,3 +1,4 @@
+import os
 from PIL import Image
 from fraktal.functions import Palette, Fractal
 
@@ -5,6 +6,7 @@ from fraktal.functions import Palette, Fractal
 class Drawing(object):
 
 	def __init__(self, screen_width: int, screen_height: int):
+		self.OUTPUT_PATH = "output"
 		self.BASERANGE_Y = 8.0
 		self.width = int(screen_width / 2)
 		self.height = screen_height
@@ -72,7 +74,9 @@ class Drawing(object):
 		for i in range(len(params)):
 			image = render_perspective(params[i])
 			if save:
-				image.save("fractal_"+str(i)+".png")
+				if not (os.path.isdir(self.OUTPUT_PATH)):
+					os.mkdir(self.OUTPUT_PATH)
+				image.save(self.OUTPUT_PATH+"/"+"fractal_"+str(i)+".png")
 				print("image saved:", i)
 			else:
 				image.show()
