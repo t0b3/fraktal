@@ -11,6 +11,10 @@ import shutil, io
 
 
 class MyHandler(SimpleHTTPRequestHandler):
+    def __init__(self, request, client_address, server, cache: bool = False):
+        self.cache = cache
+        super().__init__(request, client_address, server)
+
     def list_directory(self, path):
         self.send_error(403, "Request forbidden")
 
@@ -27,7 +31,7 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         # serve WMTS tile requests
         elif (self.path.startswith('/wmts/')):
-            self.path = '/srv' + self.path
+            self.path = '/cache' + self.path
             real_path = super().translate_path(self.path)
 
             if (os.path.isfile(real_path)):
@@ -60,12 +64,14 @@ class MyHandler(SimpleHTTPRequestHandler):
                 f.close()
 
                 # save image to WMTS cache (optionally)
-                #basedir = os.path.dirname(real_path)
-                #if not (os.path.isdir(basedir)):
-                #    create basedir if not exists
-                #    os.makedirs(basedir)
-                #image.save(real_path)
-                #print("image saved:", real_path)
+                if (self.cache):
+                    basedir = os.path.dirname(real_path)
+                    if not (os.path.isdir(basedir)):
+                        create basedir if not exists
+                        os.makedirs(basedir)
+                    image.save(real_path)
+                    if (verbose):
+                        print("image saved:", real_path)
                 image.close()
 
         # serve WMS get image requests

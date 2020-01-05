@@ -1,2 +1,3 @@
 output/
 srv/wmts/*/*
+cache/
