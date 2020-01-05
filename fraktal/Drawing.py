@@ -5,11 +5,11 @@ from fraktal.functions import Palette, Fractal
 
 class Drawing(object):
 
-	def __init__(self, screen_width: int, screen_height: int):
+	def __init__(self, width: int, height: int):
 		self.OUTPUT_PATH = "output"
 		self.BASERANGE_Y = 8.0
-		self.width = int(screen_width / 2)
-		self.height = screen_height
+		self.width = width
+		self.height = height
 		self.center = -0.8 - 0.1550000000291j
 		#self.c = -0.79+0.135j
 		self.iterate_max = 2560
@@ -80,6 +80,7 @@ class Drawing(object):
 				print("image saved:", i)
 			else:
 				image.show()
+			image.close()
 
 	def __read_params__(self, params: dict):
 		try:

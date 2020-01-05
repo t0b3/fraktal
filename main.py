@@ -9,8 +9,8 @@ def press(button):
 	if button == "Cancel":
 		app.stop()
 	else:
-		d = dr(screen_width = app.appWindow.winfo_screenwidth(),
-			   screen_height = app.appWindow.winfo_screenheight())
+		d = dr(width = int(app.appWindow.winfo_screenwidth()/2),
+			   height = app.appWindow.winfo_screenheight())
 		d.draw()
 	app.stop()
 
