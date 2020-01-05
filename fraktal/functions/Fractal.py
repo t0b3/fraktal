@@ -8,18 +8,20 @@ class Fractal(object):
 
     # return an image based on min-max coordinates, size, iterations, palette
     def render_image(self, xmin: float, xmax: float, ymin: float, ymax: float, width: int, height: int,
-                     iterate_max: int, palette: list) -> Image.Image:
+                     iterate_max: int, palette: list, verbose = False) -> Image.Image:
         # create matrix containing complex plane values
         real = np.linspace(xmin, xmax, num=width, endpoint=False, dtype=np.float64)
         imag = np.linspace(ymax, ymin, num=height, endpoint=False, dtype=np.float64) * 1j
         C = np.ravel(real + imag[:, np.newaxis]).astype(np.complex128)
+        if (verbose):
+            import time
+            start_main = time.time()
         # calc mandelbrot set
-        import time
-        start_main = time.time()
         T = self.calc_fractal(C, {"iterate_max": iterate_max})
-        end_main = time.time()
-        secs = end_main - start_main
-        print(secs)
+        if (verbose):
+            end_main = time.time()
+            secs = end_main - start_main
+            print(secs)
         # convert values to image
         image: Image.Image = Image.fromarray(T.reshape(height, width).astype('uint8'), mode="P")
         image.putpalette(palette)
