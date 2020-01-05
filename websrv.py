@@ -78,10 +78,10 @@ class MyHandler(SimpleHTTPRequestHandler):
 
 
 # start HTTP server
-def run(server_class=HTTPServer, handler_class=MyHandler):
-    server_address = ('127.0.0.1', 8080)
+def start_webservice(server_address = ('127.0.0.1', 8080), server_class=HTTPServer, handler_class=MyHandler):
     httpd = server_class(server_address, handler_class)
+    print("listening at http://"+server_address[0]+":"+str(server_address[1]))
     httpd.serve_forever()
 
 if __name__ == "__main__":
-    run()
+    start_webservice()
