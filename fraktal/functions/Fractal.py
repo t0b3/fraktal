@@ -1,31 +1,9 @@
 import numpy as np
-from PIL import Image
 
 # abstract class: DO NOT USE! - use child classes instead
 class Fractal(object):
     def __init__(self):
         self.iterate_max = 100
-
-    # return an image based on min-max coordinates, size, iterations, palette
-    def render_image(self, xmin: float, xmax: float, ymin: float, ymax: float, width: int, height: int,
-                     iterate_max: int, palette: callable, verbose = False) -> Image.Image:
-        # create matrix containing complex plane values
-        real = np.linspace(xmin, xmax, num=width, endpoint=False, dtype=np.float64)
-        imag = np.linspace(ymax, ymin, num=height, endpoint=False, dtype=np.float64) * 1j
-        C = np.ravel(real + imag[:, np.newaxis]).astype(np.complex128)
-        if (verbose):
-            import time
-            start_main = time.time()
-        # calc mandelbrot set
-        T = self.calc_fractal(C, {"iterate_max": iterate_max})
-        if (verbose):
-            end_main = time.time()
-            secs = end_main - start_main
-            print(secs)
-        # convert values to image
-        image: Image.Image = Image.fromarray(T.reshape(height, width).astype('uint8'), mode="P")
-        image.putpalette(palette())
-        return image
 
     def get_parameters(self) -> dict:
         return {

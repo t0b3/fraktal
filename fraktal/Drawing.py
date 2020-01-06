@@ -1,6 +1,29 @@
 import os
 from PIL import Image
+import numpy as np
 from fraktal.functions import Palette, Fractal
+
+
+# return an image based on min-max coordinates, size, iterations, palette
+def render_image(xmin: float, xmax: float, ymin: float, ymax: float, width: int, height: int,
+				 iterate_max: int, palette: callable, formula: callable, verbose=False) -> Image.Image:
+	# create matrix containing complex plane values
+	real = np.linspace(xmin, xmax, num=width, endpoint=False, dtype=np.float64)
+	imag = np.linspace(ymax, ymin, num=height, endpoint=False, dtype=np.float64) * 1j
+	C = np.ravel(real + imag[:, np.newaxis]).astype(np.complex128)
+	if (verbose):
+		import time
+		start_main = time.time()
+	# calc mandelbrot set
+	T = formula(C, {"iterate_max": iterate_max})
+	if (verbose):
+		end_main = time.time()
+		secs = end_main - start_main
+		print(secs)
+	# convert values to image
+	image: Image.Image = Image.fromarray(T.reshape(height, width).astype('uint8'), mode="P")
+	image.putpalette(palette())
+	return image
 
 
 # generate WMTS tile
@@ -10,7 +33,7 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	TILEHEIGHT = 256
 
 	# TODO: fractal = p["fractal"]
-	fractal = Fractal.Mandelbrot()
+	formula = Fractal.Mandelbrot().calc_fractal
 	# p["style"]
 	# p["x_row"]
 	# p["y_row"]
@@ -33,14 +56,15 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	x_range = y_range * (TILEWIDTH / TILEHEIGHT)
 
 	# calculate rendering parameters i.e. min-max coordinates
-	return fractal.render_image(xmin=p["x_row"] * x_range,
+	return render_image(xmin=p["x_row"] * x_range,
 	                            xmax=(p["x_row"] + 1) * x_range,
 	                            ymin=(-p["y_row"] - 1) * y_range,
 	                            ymax=-p["y_row"] * y_range,
 	                            width=TILEWIDTH,
 	                            height=TILEHEIGHT,
 	                            iterate_max=iterate_max,
-	                            palette=palette)
+	                            palette=palette,
+                                formula=formula)
 
 
 # render image tile(s)
@@ -60,17 +84,18 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 	yrange = BASERANGE_Y / (2 ** p["zoomlevel"])
 	xrange = yrange * (p["width"] / p["height"])
 
-	fractal = p["fractal"]
+	formula = p["fractal"].calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
-	return fractal.render_image(xmin=p["center"].real - xrange / 2,
-								xmax=p["center"].real + xrange / 2,
-								ymin=p["center"].imag - yrange / 2,
-								ymax=p["center"].imag + yrange / 2,
-								width=p["width"],
-								height=p["height"],
-								iterate_max=p["iterate_max"],
-								palette=palette)
+	return render_image(xmin=p["center"].real - xrange / 2,
+						xmax=p["center"].real + xrange / 2,
+						ymin=p["center"].imag - yrange / 2,
+						ymax=p["center"].imag + yrange / 2,
+						width=p["width"],
+						height=p["height"],
+						iterate_max=p["iterate_max"],
+						palette=palette,
+                        formula=formula)
 
 # draw fractal images for scenes
 def draw_scenes(scenes: dict = None, save: bool = True, OUTPUT_PATH = "output", verbose = False):
