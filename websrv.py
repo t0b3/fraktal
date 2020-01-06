@@ -48,10 +48,10 @@ class MyHandler(SimpleHTTPRequestHandler):
                        "style": p[1],
                        "fractal": p[0]}
                 if (len(p)==7):
-                    par["c_x"]=complex(float([2]),
-                                       float(p[3]))
+                    par["c"]=complex(float([2]),
+                                     float(p[3]))
 
-                image = Drawing.generate_wmts_tile(par)
+                image = Drawing.generate_image_wmts_tile(par)
 
                 # serve image directly
                 self.send_response(200)
@@ -67,7 +67,7 @@ class MyHandler(SimpleHTTPRequestHandler):
                 if (self.cache):
                     basedir = os.path.dirname(real_path)
                     if not (os.path.isdir(basedir)):
-                        create basedir if not exists
+                        #create basedir if not exists
                         os.makedirs(basedir)
                     image.save(real_path)
                     if (verbose):
@@ -76,6 +76,7 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         # serve WMS get image requests
         elif (self.path.startswith("/wms")):
+            # TODO: add WMS get image requests
             self.send_error(501)
 
         # respond with failure to unexpected requests

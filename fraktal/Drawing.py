@@ -4,43 +4,43 @@ from fraktal.functions import Palette, Fractal
 
 
 # generate WMTS tile
-def generate_wmts_tile(par: dict) -> Image.Image:
+def generate_image_wmts_tile(p: dict) -> Image.Image:
     BASERANGE_Y = 2.0
     TILEWIDTH = 256
     TILEHEIGHT = 256
 
-    # TODO: fractal = par["fractal"]
+    # TODO: fractal = p["fractal"]
     fractal = Fractal.Mandelbrot()
-    x_row = par["x_row"]
-    y_row = par["y_row"]
-    zoom = par["zoomlevel"]
+    # p["x_row"]
+    # p["y_row"]
+    # p["zoomlevel"]
+    # p["style"]
 
     # TODO: use smart choice for iterate_max
     iterate_max = 2560
-    if zoom > 16:
+    if p["zoomlevel"] > 16:
         iterate_max *= 10
-    if zoom > 23:
+    if p["zoomlevel"] > 23:
         iterate_max *= 3
-    if zoom > 32:
+    if p["zoomlevel"] > 32:
         iterate_max *= 4
-    if zoom > 41:
+    if p["zoomlevel"] > 41:
         iterate_max *= 6
 
-    # TODO: palette = par["style"]
-    palette = Palette.Palette(iterate_max).get_palette
+    palette = Palette.palettes(iterate_max)[p["style"]]
 
-    y_range = BASERANGE_Y / (2 ** zoom)
+    y_range = BASERANGE_Y / (2 ** p["zoomlevel"])
     x_range = y_range * (TILEWIDTH / TILEHEIGHT)
 
     # calculate rendering parameters i.e. min-max coordinates
-    return fractal.render_image(xmin=x_row * x_range,
-                                xmax=(x_row + 1) * x_range,
-                                ymin=(-y_row - 1) * y_range,
-                                ymax=-y_row * y_range,
+    return fractal.render_image(xmin=p["x_row"] * x_range,
+                                xmax=(p["x_row"] + 1) * x_range,
+                                ymin=(-p["y_row"] - 1) * y_range,
+                                ymax=-p["y_row"] * y_range,
                                 width=TILEWIDTH,
                                 height=TILEHEIGHT,
                                 iterate_max=iterate_max,
-                                palette=palette())
+                                palette=palette)
 
 
 
@@ -55,7 +55,7 @@ class Drawing(object):
 		#self.c = -0.79+0.135j
 		self.iterate_max = 2560
 		self.zoom = 0
-		self.palette = Palette.Palette(self.iterate_max).get_palette()
+		self.style = "default"
 		self.fractal = Fractal.Mandelbrot()
 
 	def get_parameters(self) -> dict:
@@ -63,7 +63,7 @@ class Drawing(object):
 			"center": self.center,
 			"iterate_max": self.iterate_max,
 			"zoom": self.zoom,
-			"palette": self.palette,
+			"style": self.style,
 			"fractal": self.fractal
 		}
 
@@ -73,6 +73,8 @@ class Drawing(object):
 		# render image tile(s)
 		def render_perspective(par: dict) -> Image.Image:
 			self.__read_params__(par)
+
+			palette = Palette.palettes(self.iterate_max)[self.style]
 
 			yrange = self.BASERANGE_Y / (2 ** self.zoom)
 			xrange = yrange * (self.width / self.height)
@@ -85,7 +87,7 @@ class Drawing(object):
 											 width=self.width,
 											 height=self.height,
 											 iterate_max=self.iterate_max,
-											 palette=self.palette)
+											 palette=palette)
 
 		# list of default params
 		if params is None:

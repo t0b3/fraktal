@@ -8,7 +8,7 @@ class Fractal(object):
 
     # return an image based on min-max coordinates, size, iterations, palette
     def render_image(self, xmin: float, xmax: float, ymin: float, ymax: float, width: int, height: int,
-                     iterate_max: int, palette: list, verbose = False) -> Image.Image:
+                     iterate_max: int, palette: callable, verbose = False) -> Image.Image:
         # create matrix containing complex plane values
         real = np.linspace(xmin, xmax, num=width, endpoint=False, dtype=np.float64)
         imag = np.linspace(ymax, ymin, num=height, endpoint=False, dtype=np.float64) * 1j
@@ -24,7 +24,7 @@ class Fractal(object):
             print(secs)
         # convert values to image
         image: Image.Image = Image.fromarray(T.reshape(height, width).astype('uint8'), mode="P")
-        image.putpalette(palette)
+        image.putpalette(palette())
         return image
 
     def get_parameters(self) -> dict:
