@@ -32,8 +32,7 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	TILEWIDTH = 256
 	TILEHEIGHT = 256
 
-	# TODO: fractal = p["fractal"]
-	formula = Fractal.Mandelbrot().calc_fractal
+	# p["fractal"]
 	# p["style"]
 	# p["x_row"]
 	# p["y_row"]
@@ -54,6 +53,8 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 
 	y_range = BASERANGE_Y / (2 ** p["zoomlevel"])
 	x_range = y_range * (TILEWIDTH / TILEHEIGHT)
+
+	formula = Fractal.formula[p["fractal"]]().calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
 	return render_image(xmin=p["x_row"] * x_range,

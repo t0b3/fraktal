@@ -322,3 +322,9 @@ class Julia4(Fractal):
         d = super().get_parameters()
         d["c"] = self.c
         return d
+
+
+formula = {"mandelbrot": Mandelbrot,
+           "julia": Julia,
+           "mandelbrot4": Mandelbrot4,
+           "julia4": Julia4}
