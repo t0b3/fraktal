@@ -1,7 +1,72 @@
-from fraktal.Drawing import Drawing as dr
+from fraktal.Drawing import Drawing as dr, draw_scenes
+from fraktal.functions import Palette, Fractal
 from appJar import gui
 
+def create_default_scenes(width: int, height: int) -> list:
 
+	collection_of_scenes = []
+
+	scenes = []
+	for i in range(47):
+		p = {"width": width,
+		     "height": height,
+		     "fractal": Fractal.Mandelbrot(),
+		     "center": -0.8 - 0.1550000000291j,
+		     "zoomlevel": i,
+		     "iterate_max": 2560,
+		     "style": "default"}
+		scenes.append(p)
+	collection_of_scenes.append(scenes)
+
+	scenes = []
+	for i in range(47):
+		p = {"width": width,
+		     "height": height,
+		     "fractal": Fractal.Mandelbrot(),
+		     "center": -0.8 - 0.1550000000291j,
+		     "zoomlevel": i,
+		     "iterate_max": 2560,
+		     "style": "rainbow"}
+		scenes.append(p)
+	collection_of_scenes.append(scenes)
+
+	scenes = []
+	for i in range(47):
+		p = {"width": width,
+		     "height": height,
+		     "fractal": Fractal.Julia(c=-0.79 + 0.135j),
+		     "center": +0.4938793215408734 - 0.15j,
+		     "zoomlevel": i,
+		     "iterate_max": 2560,
+		     "style": "default"}
+		scenes.append(p)
+	collection_of_scenes.append(scenes)
+
+	scenes = []
+	for i in range(8):
+		p = {"width": width,
+		     "height": height,
+		     "fractal": Fractal.Mandelbrot4(),
+		     "center": +0.4938793215408734 - 0.15j,
+		     "zoomlevel": i,
+		     "iterate_max": 2560,
+		     "style": "default"}
+		scenes.append(p)
+	collection_of_scenes.append(scenes)
+
+	scenes = []
+	for i in range(8):
+		p = {"width": width,
+		     "height": height,
+		     "fractal": Fractal.Julia4(c=-0.78 + 0.115j),
+		     "center": +0.4938793215408734 - 0.15j,
+		     "zoomlevel": i,
+		     "iterate_max": 2560,
+		     "style": "default"}
+		scenes.append(p)
+	collection_of_scenes.append(scenes)
+
+	return collection_of_scenes
 
 
 # handle button events
@@ -11,7 +76,10 @@ def press(button):
 	else:
 		d = dr(width = int(app.appWindow.winfo_screenwidth()/2),
 			   height = app.appWindow.winfo_screenheight())
-		d.draw()
+		scenes = create_default_scenes(width = int(app.appWindow.winfo_screenwidth()/2),
+		                               height = app.appWindow.winfo_screenheight())
+		draw_scenes(scenes[2])
+
 	app.stop()
 
 if __name__ == "__main__":
