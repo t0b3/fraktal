@@ -1,5 +1,4 @@
 from fraktal.Drawing import Drawing as dr, draw_scenes
-from fraktal.functions import Palette, Fractal
 from appJar import gui
 
 def create_default_scenes(width: int, height: int) -> list:
@@ -10,7 +9,7 @@ def create_default_scenes(width: int, height: int) -> list:
 	for i in range(47):
 		p = {"width": width,
 		     "height": height,
-		     "fractal": Fractal.Mandelbrot(),
+		     "fractal": "mandelbrot",
 		     "center": -0.8 - 0.1550000000291j,
 		     "zoomlevel": i,
 		     "iterate_max": 2560,
@@ -22,7 +21,7 @@ def create_default_scenes(width: int, height: int) -> list:
 	for i in range(47):
 		p = {"width": width,
 		     "height": height,
-		     "fractal": Fractal.Mandelbrot(),
+		     "fractal": "mandelbrot",
 		     "center": -0.8 - 0.1550000000291j,
 		     "zoomlevel": i,
 		     "iterate_max": 2560,
@@ -34,7 +33,8 @@ def create_default_scenes(width: int, height: int) -> list:
 	for i in range(47):
 		p = {"width": width,
 		     "height": height,
-		     "fractal": Fractal.Julia(c=-0.79 + 0.135j),
+		     "fractal": "julia",
+			 "c": -0.79 + 0.135j,
 		     "center": +0.4938793215408734 - 0.15j,
 		     "zoomlevel": i,
 		     "iterate_max": 2560,
@@ -46,7 +46,7 @@ def create_default_scenes(width: int, height: int) -> list:
 	for i in range(8):
 		p = {"width": width,
 		     "height": height,
-		     "fractal": Fractal.Mandelbrot4(),
+		     "fractal": "mandelbrot4",
 		     "center": +0.4938793215408734 - 0.15j,
 		     "zoomlevel": i,
 		     "iterate_max": 2560,
@@ -58,7 +58,8 @@ def create_default_scenes(width: int, height: int) -> list:
 	for i in range(8):
 		p = {"width": width,
 		     "height": height,
-		     "fractal": Fractal.Julia4(c=-0.78 + 0.115j),
+		     "fractal": "julia4",
+			 "c": -0.78 + 0.115j,
 		     "center": +0.4938793215408734 - 0.15j,
 		     "zoomlevel": i,
 		     "iterate_max": 2560,
@@ -78,7 +79,7 @@ def press(button):
 			   height = app.appWindow.winfo_screenheight())
 		scenes = create_default_scenes(width = int(app.appWindow.winfo_screenwidth()/2),
 		                               height = app.appWindow.winfo_screenheight())
-		draw_scenes(scenes[2])
+		draw_scenes(scenes[1])
 
 	app.stop()
 

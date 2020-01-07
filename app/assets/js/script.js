@@ -33,7 +33,7 @@ function initializeMap() {
   var fraktalLayer = new ol.layer.Tile({
     source: new ol.source.WMTS({
       url:
-        "http://localhost:8080/wmts/{Layer}/default/{TileMatrix}/{TileCol}/{TileRow}.png",
+        "http://localhost:8080/wmts/{Layer}/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png",
       tileGrid: new ol.tilegrid.WMTS({
         origin: [0,0],
         resolutions: RESOLUTIONS,
@@ -41,6 +41,7 @@ function initializeMap() {
       }),
       projection: PROJECTION,
       layer: "mandelbrot",
+      style: "default",
       requestEncoding: "REST"
     })
   })

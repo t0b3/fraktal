@@ -1,7 +1,8 @@
 import os
 from PIL import Image
 import numpy as np
-from fraktal.functions import Palette, Fractal
+from fraktal.functions.Palette import palettes
+from fraktal.functions.Fractal import formula
 
 
 # return an image based on min-max coordinates, size, iterations, palette
@@ -51,12 +52,15 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	if p["zoomlevel"] > 41:
 		iterate_max *= 6
 
-	palette = Palette.palettes(iterate_max)[p["style"]]
+	palette = palettes(iterate_max)[p["style"]]
 
 	y_range = BASERANGE_Y / (2 ** p["zoomlevel"])
 	x_range = y_range * (TILEWIDTH / TILEHEIGHT)
 
-	formula = Fractal.formula[p["fractal"]](p["c"]).calc_fractal
+	p.setdefault("c", None)
+	#p2 = {k: v for k, v in p.items() if k in ('iterate_max', 'c')}
+	#f = formula[p["fractal"]](p2).calc_fractal
+	f = formula[p["fractal"]](p["c"]).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
 	return render_image(xmin=p["x_row"] * x_range,
@@ -67,7 +71,7 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	                    height=TILEHEIGHT,
 	                    iterate_max=iterate_max,
 	                    palette=palette,
-                        formula=formula)
+                        formula=f)
 
 
 # render image tile(s)
@@ -81,13 +85,18 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 	# p["zoomlevel"]
 	# p["style"]
 	# p["iterate_max"]
+	# and maybe
+	# p["c"]
 
-	palette = Palette.palettes(p["iterate_max"])[p["style"]]
+	palette = palettes(p["iterate_max"])[p["style"]]
 
 	yrange = BASERANGE_Y / (2 ** p["zoomlevel"])
 	xrange = yrange * (p["width"] / p["height"])
 
-	formula = p["fractal"].calc_fractal
+	p.setdefault("c", None)
+	#p2 = {k: v for k, v in p.items() if k in ('iterate_max', 'c')}
+	#f = formula[p["fractal"]](p2).calc_fractal
+	f = formula[p["fractal"]](p["c"]).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
 	return render_image(xmin=p["center"].real - xrange / 2,
@@ -98,7 +107,7 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 						height=p["height"],
 						iterate_max=p["iterate_max"],
 						palette=palette,
-                        formula=formula)
+                        formula=f)
 
 # draw fractal images for scenes
 def draw_scenes(scenes: dict = None, save: bool = True, OUTPUT_PATH = "output", verbose = False):
@@ -133,7 +142,7 @@ class Drawing(object):
 		self.iterate_max = 2560
 		self.zoomlevel = 0
 		self.style = "default"
-		self.fractal = Fractal.Mandelbrot()
+		self.fractal = formula["mandelbrot"]()
 		#self.c = -0.79+0.135j
 
 	def get_parameters(self) -> dict:
