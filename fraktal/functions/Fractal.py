@@ -1,9 +1,11 @@
+import pyopencl as cl
 import numpy as np
 
 # abstract class: DO NOT USE! - use child classes instead
 class Fractal(object):
-    def __init__(self):
+    def __init__(self, c: complex = None):
         self.iterate_max = 100
+        self.c = c or -0.8+0.155j
 
     def get_parameters(self) -> dict:
         return {
@@ -20,19 +22,14 @@ class Fractal(object):
 
 
 class Mandelbrot(Fractal):
-
     # return mandelbrot set i.e. depth values as matrix
     '''opencl implementation'''
     def calc_fractal_opencl(self, q: np.ndarray, param: dict) -> np.ndarray:
         self.__read_params__(param)
 
-        import pyopencl as cl
-
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
-
         output = np.empty(q.shape, dtype=np.uint32)
-
         mf = cl.mem_flags
         q_opencl = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=q)
         output_opencl = cl.Buffer(ctx, mf.WRITE_ONLY, output.nbytes)
@@ -65,9 +62,7 @@ class Mandelbrot(Fractal):
 
         prg.mandelbrot(queue, output.shape, None, q_opencl,
                        output_opencl, np.uint32(self.iterate_max))
-
         cl.enqueue_copy(queue, output, output_opencl).wait()
-
         return output
 
     # return mandelbrot set i.e. depth values as matrix
@@ -89,23 +84,14 @@ class Mandelbrot(Fractal):
     calc_fractal = calc_fractal_opencl
 
 class Julia(Fractal):
-    def __init__(self, c = -0.8+0.155j):
-        super().__init__()
-        self.c = c
-
     # return julia set i.e. depth values as matrix
     '''opencl implementation'''
-
     def calc_fractal_opencl(self, q: np.ndarray, param: dict) -> np.ndarray:
         self.__read_params__(param)
 
-        import pyopencl as cl
-
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
-
         output = np.empty(q.shape, dtype=np.uint32)
-
         mf = cl.mem_flags
         q_opencl = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=q)
         output_opencl = cl.Buffer(ctx, mf.WRITE_ONLY, output.nbytes)
@@ -137,10 +123,8 @@ class Julia(Fractal):
         """).build()
 
         prg.julia(queue, output.shape, None, q_opencl,
-                       output_opencl, np.uint32(self.iterate_max), np.complex128(self.c))
-
+                  output_opencl, np.uint32(self.iterate_max), np.complex128(self.c))
         cl.enqueue_copy(queue, output, output_opencl).wait()
-
         return output
 
     # return julia set i.e. depth values as matrix
@@ -170,17 +154,12 @@ class Julia(Fractal):
 class Mandelbrot4(Fractal):
     # return mandelbrot set i.e. depth values as matrix
     '''opencl implementation'''
-
     def calc_fractal_opencl(self, q: np.ndarray, param: dict) -> np.ndarray:
         self.__read_params__(param)
 
-        import pyopencl as cl
-
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
-
         output = np.empty(q.shape, dtype=np.uint32)
-
         mf = cl.mem_flags
         q_opencl = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=q)
         output_opencl = cl.Buffer(ctx, mf.WRITE_ONLY, output.nbytes)
@@ -216,9 +195,7 @@ class Mandelbrot4(Fractal):
 
         prg.mandelbrot(queue, output.shape, None, q_opencl,
                        output_opencl, np.uint32(self.iterate_max))
-
         cl.enqueue_copy(queue, output, output_opencl).wait()
-
         return output
 
     # return mandelbrot set i.e. depth values as matrix
@@ -241,24 +218,15 @@ class Mandelbrot4(Fractal):
     calc_fractal = calc_fractal_opencl
 
 
-class Julia4(Fractal):
-    def __init__(self, c=-0.8 + 0.155j):
-        super().__init__()
-        self.c = c
-
+class Julia4(Julia):
     # return julia set i.e. depth values as matrix
     '''opencl implementation'''
-
     def calc_fractal_opencl(self, q: np.ndarray, param: dict) -> np.ndarray:
         self.__read_params__(param)
 
-        import pyopencl as cl
-
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
-
         output = np.empty(q.shape, dtype=np.uint32)
-
         mf = cl.mem_flags
         q_opencl = cl.Buffer(ctx, mf.READ_ONLY | mf.COPY_HOST_PTR, hostbuf=q)
         output_opencl = cl.Buffer(ctx, mf.WRITE_ONLY, output.nbytes)
@@ -294,14 +262,11 @@ class Julia4(Fractal):
 
         prg.julia(queue, output.shape, None, q_opencl,
                   output_opencl, np.uint32(self.iterate_max), np.complex128(self.c))
-
         cl.enqueue_copy(queue, output, output_opencl).wait()
-
         return output
 
     # return julia set i.e. depth values as matrix
     '''numpy implementation'''
-
     def calc_fractal_numpy(self, Z: np.ndarray, param: dict) -> np.ndarray:
         self.__read_params__(param)
 

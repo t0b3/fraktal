@@ -46,9 +46,10 @@ class MyHandler(SimpleHTTPRequestHandler):
                        "y_row": int(p[-1]),
                        "zoomlevel": int(p[-3]),
                        "style": p[1],
-                       "fractal": p[0]}
+                       "fractal": p[0],
+                       "c": None}
                 if (len(p)==7):
-                    par["c"]=complex(float([2]),
+                    par["c"]=complex(float(p[2]),
                                      float(p[3]))
 
                 image = Drawing.generate_image_wmts_tile(par)
