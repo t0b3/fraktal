@@ -1,32 +1,19 @@
 import pyopencl as cl
 import numpy as np
 
-# abstract class: DO NOT USE! - use child classes instead
-class Fractal(object):
-    def __init__(self, c: complex = None):
-        self.iterate_max = 100
-        self.c = c or -0.8+0.155j
+class Mandelbrot(object):
+    def __init__(self, iterate_max: int = 100):
+        self.iterate_max = iterate_max
 
     def get_parameters(self) -> dict:
         return {
             "iterate_max": self.iterate_max,
         }
 
-    def __read_params__(self, params: dict):
-        try:
-            for key, value in params.items():
-                setattr(self, key, value)
-        except TypeError as err:
-            print(err)
-            raise Exception(str(key) + " has the wrong type!")
 
-
-class Mandelbrot(Fractal):
     # return mandelbrot set i.e. depth values as matrix
     '''opencl implementation'''
-    def calc_fractal_opencl(self, q: np.ndarray, param: dict) -> np.ndarray:
-        self.__read_params__(param)
-
+    def calc_fractal_opencl(self, q: np.ndarray) -> np.ndarray:
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
         output = np.empty(q.shape, dtype=np.uint32)
@@ -56,7 +43,7 @@ class Mandelbrot(Fractal):
                      break;
                 }
             }
-            
+          
         }
         """).build()
 
@@ -67,9 +54,7 @@ class Mandelbrot(Fractal):
 
     # return mandelbrot set i.e. depth values as matrix
     '''numpy implementation'''
-    def calc_fractal_numpy(self, q: np.ndarray, param: dict) -> np.ndarray:
-        self.__read_params__(param)
-
+    def calc_fractal_numpy(self, q: np.ndarray) -> np.ndarray:
         # init helper matrices
         Z = np.zeros_like(q, np.complex128)
         T = np.zeros(q.shape, np.uint32)
@@ -83,12 +68,14 @@ class Mandelbrot(Fractal):
     #calc_fractal = calc_fractal_numpy
     calc_fractal = calc_fractal_opencl
 
-class Julia(Fractal):
+class Julia(Mandelbrot):
+    def __init__(self, iterate_max: int = 100, c: complex = -0.8+0.155j):
+        super().__init__(iterate_max)
+        self.c = c
+
     # return julia set i.e. depth values as matrix
     '''opencl implementation'''
-    def calc_fractal_opencl(self, q: np.ndarray, param: dict) -> np.ndarray:
-        self.__read_params__(param)
-
+    def calc_fractal_opencl(self, q: np.ndarray) -> np.ndarray:
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
         output = np.empty(q.shape, dtype=np.uint32)
@@ -129,9 +116,7 @@ class Julia(Fractal):
 
     # return julia set i.e. depth values as matrix
     '''numpy implementation'''
-    def calc_fractal_numpy(self, Z: np.ndarray, param: dict) -> np.ndarray:
-        self.__read_params__(param)
-
+    def calc_fractal_numpy(self, Z: np.ndarray) -> np.ndarray:
         # init helper matrices
         T = np.zeros(Z.shape, np.uint32)
         c = np.complex128(self.c)
@@ -151,12 +136,10 @@ class Julia(Fractal):
         return d
 
 
-class Mandelbrot4(Fractal):
+class Mandelbrot4(Mandelbrot):
     # return mandelbrot set i.e. depth values as matrix
     '''opencl implementation'''
-    def calc_fractal_opencl(self, q: np.ndarray, param: dict) -> np.ndarray:
-        self.__read_params__(param)
-
+    def calc_fractal_opencl(self, q: np.ndarray) -> np.ndarray:
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
         output = np.empty(q.shape, dtype=np.uint32)
@@ -201,9 +184,7 @@ class Mandelbrot4(Fractal):
     # return mandelbrot set i.e. depth values as matrix
     '''numpy implementation'''
 
-    def calc_fractal_numpy(self, q: np.ndarray, param: dict) -> np.ndarray:
-        self.__read_params__(param)
-
+    def calc_fractal_numpy(self, q: np.ndarray) -> np.ndarray:
         # init helper matrices
         Z = np.zeros_like(q, np.complex128)
         T = np.zeros(q.shape, np.uint32)
@@ -221,9 +202,7 @@ class Mandelbrot4(Fractal):
 class Julia4(Julia):
     # return julia set i.e. depth values as matrix
     '''opencl implementation'''
-    def calc_fractal_opencl(self, q: np.ndarray, param: dict) -> np.ndarray:
-        self.__read_params__(param)
-
+    def calc_fractal_opencl(self, q: np.ndarray) -> np.ndarray:
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
         output = np.empty(q.shape, dtype=np.uint32)
@@ -267,9 +246,7 @@ class Julia4(Julia):
 
     # return julia set i.e. depth values as matrix
     '''numpy implementation'''
-    def calc_fractal_numpy(self, Z: np.ndarray, param: dict) -> np.ndarray:
-        self.__read_params__(param)
-
+    def calc_fractal_numpy(self, Z: np.ndarray) -> np.ndarray:
         # init helper matrices
         T = np.zeros(Z.shape, np.uint32)
         c = np.complex128(self.c)

@@ -5,9 +5,13 @@ from fraktal.functions.Palette import palettes
 from fraktal.functions.Fractal import formula
 
 
+def filter_dict(d: dict, keys: list):
+	return {k: v for k, v in d.items() if k in keys}
+
+
 # return an image based on min-max coordinates, size, iterations, palette
 def render_image(xmin: float, xmax: float, ymin: float, ymax: float, width: int, height: int,
-				 iterate_max: int, palette: callable, formula: callable, verbose=False) -> Image.Image:
+				 palette: callable, formula: callable, verbose=False) -> Image.Image:
 	# create matrix containing complex plane values
 	real = np.linspace(xmin, xmax, num=width, endpoint=False, dtype=np.float64)
 	imag = np.linspace(ymax, ymin, num=height, endpoint=False, dtype=np.float64) * 1j
@@ -16,7 +20,7 @@ def render_image(xmin: float, xmax: float, ymin: float, ymax: float, width: int,
 		import time
 		start_main = time.time()
 	# calc mandelbrot set
-	T = formula(C, {"iterate_max": iterate_max})
+	T = formula(C)
 	if (verbose):
 		end_main = time.time()
 		secs = end_main - start_main
@@ -42,25 +46,23 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
     # p["c"]
 
 	# TODO: use smart choice for iterate_max
-	iterate_max = 2560
+	p["iterate_max"] = 2560
 	if p["zoomlevel"] > 16:
-		iterate_max *= 10
+		p["iterate_max"] *= 10
 	if p["zoomlevel"] > 23:
-		iterate_max *= 3
+		p["iterate_max"] *= 3
 	if p["zoomlevel"] > 32:
-		iterate_max *= 4
+		p["iterate_max"] *= 4
 	if p["zoomlevel"] > 41:
-		iterate_max *= 6
+		p["iterate_max"] *= 6
 
-	palette = palettes(iterate_max)[p["style"]]
+	palette = palettes(p["iterate_max"])[p["style"]]
 
 	y_range = BASERANGE_Y / (2 ** p["zoomlevel"])
 	x_range = y_range * (TILEWIDTH / TILEHEIGHT)
 
-	p.setdefault("c", None)
-	#p2 = {k: v for k, v in p.items() if k in ('iterate_max', 'c')}
-	#f = formula[p["fractal"]](p2).calc_fractal
-	f = formula[p["fractal"]](p["c"]).calc_fractal
+	p2 = filter_dict(p, ('iterate_max', 'c'))
+	f = formula[p["fractal"]](**p2).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
 	return render_image(xmin=p["x_row"] * x_range,
@@ -69,7 +71,6 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	                    ymax=-p["y_row"] * y_range,
 	                    width=TILEWIDTH,
 	                    height=TILEHEIGHT,
-	                    iterate_max=iterate_max,
 	                    palette=palette,
                         formula=f)
 
@@ -93,10 +94,8 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 	yrange = BASERANGE_Y / (2 ** p["zoomlevel"])
 	xrange = yrange * (p["width"] / p["height"])
 
-	p.setdefault("c", None)
-	#p2 = {k: v for k, v in p.items() if k in ('iterate_max', 'c')}
-	#f = formula[p["fractal"]](p2).calc_fractal
-	f = formula[p["fractal"]](p["c"]).calc_fractal
+	p2 = filter_dict(p, ('iterate_max', 'c'))
+	f = formula[p["fractal"]](**p2).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
 	return render_image(xmin=p["center"].real - xrange / 2,
@@ -105,7 +104,6 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 						ymax=p["center"].imag + yrange / 2,
 						width=p["width"],
 						height=p["height"],
-						iterate_max=p["iterate_max"],
 						palette=palette,
                         formula=f)
 
