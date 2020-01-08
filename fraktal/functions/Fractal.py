@@ -260,13 +260,9 @@ class Julia4(Julia):
     # calc_fractal = calc_fractal_numpy
     calc_fractal = calc_fractal_opencl
 
-    def get_parameters(self) -> dict:
-        d = super().get_parameters()
-        d["c"] = self.c
-        return d
 
 
-formula = {"mandelbrot": Mandelbrot,
+formulas = {"mandelbrot": Mandelbrot,
            "julia": Julia,
            "mandelbrot4": Mandelbrot4,
            "julia4": Julia4}

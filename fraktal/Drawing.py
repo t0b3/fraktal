@@ -2,7 +2,7 @@ import os
 from PIL import Image
 import numpy as np
 from fraktal.functions.Palette import palettes
-from fraktal.functions.Fractal import formula
+from fraktal.functions.Fractal import formulas
 
 
 def filter_dict(d: dict, keys: list):
@@ -62,7 +62,7 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	x_range = y_range * (TILEWIDTH / TILEHEIGHT)
 
 	p2 = filter_dict(p, ('iterate_max', 'c'))
-	f = formula[p["fractal"]](**p2).calc_fractal
+	formula = formulas[p["fractal"]](**p2).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
 	return render_image(xmin=p["x_row"] * x_range,
@@ -72,7 +72,7 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	                    width=TILEWIDTH,
 	                    height=TILEHEIGHT,
 	                    palette=palette,
-                        formula=f)
+                        formula=formula)
 
 
 # render image tile(s)
@@ -95,7 +95,7 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 	xrange = yrange * (p["width"] / p["height"])
 
 	p2 = filter_dict(p, ('iterate_max', 'c'))
-	f = formula[p["fractal"]](**p2).calc_fractal
+	formula = formulas[p["fractal"]](**p2).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
 	return render_image(xmin=p["center"].real - xrange / 2,
@@ -105,7 +105,7 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 						width=p["width"],
 						height=p["height"],
 						palette=palette,
-                        formula=f)
+                        formula=formula)
 
 # draw fractal images for scenes
 def draw_scenes(scenes: dict = None, save: bool = True, OUTPUT_PATH = "output", verbose = False):
@@ -140,24 +140,24 @@ class Drawing(object):
 		self.iterate_max = 2560
 		self.zoomlevel = 0
 		self.style = "default"
-		self.fractal = formula["mandelbrot"]()
+		self.fractal = formulas["mandelbrot"]()
 		#self.c = -0.79+0.135j
 
 	def get_parameters(self) -> dict:
 		return {
 			"center": self.center,
-			"iterate_max": self.iterate_max,
 			"zoomlevel": self.zoomlevel,
 			"style": self.style,
 			"fractal": self.fractal,
 			"width": self.width,
-			"height": self.height
+			"height": self.height,
+			**self.fractal.get_parameters()
 		}
 
-	def __read_params__(self, params: dict):
-		try:
-			for key, value in params.items():
-				setattr(self, key, value)
-		except TypeError as err:
-			print(err)
-			raise Exception(str(key) + " has the wrong type!")
+	#def __read_params__(self, params: dict):
+	#	try:
+	#		for key, value in params.items():
+	#			setattr(self, key, value)
+	#	except TypeError as err:
+	#		print(err)
+	#		raise Exception(str(key) + " has the wrong type!")
