@@ -42,8 +42,8 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	# p["x_row"]
 	# p["y_row"]
 	# p["zoomlevel"]
-    # and maybe
-    # p["c"]
+	# and maybe
+	# p["c"]
 
 	# TODO: use smart choice for iterate_max
 	p["iterate_max"] = 2560
@@ -61,18 +61,20 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	y_range = BASERANGE_Y / (2 ** p["zoomlevel"])
 	x_range = y_range * (TILEWIDTH / TILEHEIGHT)
 
-	p2 = filter_dict(p, ('iterate_max', 'c'))
+	accepted_args = formulas[p["fractal"]]().get_parameters().keys()
+	# returns something like ('iterate_max', 'c')
+	p2 = filter_dict(p, accepted_args)
 	formula = formulas[p["fractal"]](**p2).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
 	return render_image(xmin=p["x_row"] * x_range,
-	                    xmax=(p["x_row"] + 1) * x_range,
-	                    ymin=(-p["y_row"] - 1) * y_range,
-	                    ymax=-p["y_row"] * y_range,
-	                    width=TILEWIDTH,
-	                    height=TILEHEIGHT,
-	                    palette=palette,
-                        formula=formula)
+		xmax=(p["x_row"] + 1) * x_range,
+		ymin=(-p["y_row"] - 1) * y_range,
+		ymax=-p["y_row"] * y_range,
+		width=TILEWIDTH,
+		height=TILEHEIGHT,
+		palette=palette,
+		formula=formula)
 
 
 # render image tile(s)
@@ -105,7 +107,7 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 						width=p["width"],
 						height=p["height"],
 						palette=palette,
-                        formula=formula)
+						formula=formula)
 
 # draw fractal images for scenes
 def draw_scenes(scenes: dict = None, save: bool = True, OUTPUT_PATH = "output", verbose = False):

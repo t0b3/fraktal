@@ -2,7 +2,7 @@ import pyopencl as cl
 import numpy as np
 
 class Mandelbrot(object):
-    def __init__(self, iterate_max: int = 100, *unused_args, **kwargs):
+    def __init__(self, iterate_max: int = 100):
         self.iterate_max = iterate_max
 
     def get_parameters(self) -> dict:
