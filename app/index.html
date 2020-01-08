@@ -13,6 +13,36 @@
 
     <div id="map" class="map"></div>
 
+    <div id="layers-panel">
+      <div id="layers-title" class="flex" onclick="handleLayersTitleClick();">
+        <h3 id="layers-list">Formulas</h3>
+        <span id="layers-caret" class="caret-up"></span>
+      </div>
+      <div id="layers-body">
+        <div id="layers">
+          <div class="flex layer-row" id="layer-row0" onclick="handleLayerRowClicked(event, 'mandelbrot');"><div class="flex">Mandelbrot</div></div>
+          <div class="flex layer-row" id="layer-row1" onclick="handleLayerRowClicked(event, 'julia');"><div class="flex">Julia</div></div>
+          <div class="flex layer-row" id="layer-row2" onclick="handleLayerRowClicked(event, 'mandelbrot4');"><div class="flex">Mandelbrot4</div></div>
+          <div class="flex layer-row" id="layer-row3" onclick="handleLayerRowClicked(event, 'julia4');"><div class="flex">Julia4</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="styles-panel">
+      <div id="styles-title" class="flex" onclick="handleStylesTitleClick();">
+        <h3 id="styles-list">Styles</h3>
+        <span id="styles-caret" class="caret-up"></span>
+      </div>
+      <div id="styles-body">
+        <div id="styles">
+          <div class="flex style-row" id="style-row0" onclick="handleStyleRowClicked(event, 'default');"><div class="flex">Alternating Colors</div></div>
+          <div class="flex style-row" id="style-row1" onclick="handleStyleRowClicked(event, 'rainbow');"><div class="flex">Rainbow</div></div>
+          <div class="flex style-row" id="style-row2" onclick="handleStyleRowClicked(event, 'gradient_pink');"><div class="flex">Pink Gradient</div></div>
+        </div>
+      </div>
+    </div>
+
+
     <div id="home-button" class="ol-control">
       <button class="ol-control" onclick="recenterMap();"><img src="assets/images/home-icon.png" alt="Home" height="15px"/></button>
     </div>

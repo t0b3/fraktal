@@ -9,6 +9,65 @@ body {
   height: calc(100vh);
 }
 
+#layers-panel {
+  position: absolute;
+  top: 12px;
+  right: 8px;
+  border: 1px solid grey;
+  background: rgba(255, 255, 255, 0.6);
+  width: 150px;
+  height: auto;
+}
+
+#styles-panel {
+  position: absolute;
+  top: 150px;
+  right: 8px;
+  border: 1px solid grey;
+  background: rgba(255, 255, 255, 0.6);
+  width: 150px;
+  height: auto;
+}
+
+#layers-title, #styles-title {
+  padding: 5px;
+  cursor: pointer;
+  justify-content: space-between;
+  border-bottom: 1px solid grey;
+}
+
+.layer-row, .style-row {
+  height: 20px;
+  cursor: pointer;
+  padding-left: 5px;
+}
+
+.layer-row:hover, .style-row:hover {
+  background: lightgrey;
+}
+
+.layer-row.active, .style-row.active {
+  background: grey;
+}
+
+#layers, #styles {
+  overflow: auto;
+  height: auto;
+}
+
+.hidden {
+  display: none;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+h3 {
+  margin: 0;
+}
+
 .ol-control button {
   background-color: rgba(255, 255, 255, 0.8) !important;
   color: black !important;
