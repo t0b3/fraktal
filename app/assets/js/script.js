@@ -78,6 +78,17 @@ function initializeMap() {
         }
       })
       .extend([
+        new ol.control.MousePosition({
+          coordinateFormat: ol.coordinate.createStringXY(16),
+          projection: 'EPSG:4326',
+          // comment the following two lines to have the mouse position
+          // be placed within the map.
+          className: 'custom-mouse-position',
+          target: document.getElementById('mouse-position'),
+          undefinedHTML: '&nbsp;'
+        })
+      ])
+      .extend([
         new ol.control.ScaleLine({
           target: document.getElementById("scale-line"),
           units: "metric"
@@ -85,17 +96,29 @@ function initializeMap() {
       ]),
     logo: false
   });
+/*
+  map.on('pointermove', function(event) {
+    //console.log(event.coordinate);
+  });
+*/
+  map.on('contextmenu', function(event) {
+    event.preventDefault();
+    //console.log(event.coordinate);
+    [mapCX, mapCY] = event.coordinate;
+    map.getLayers().item(0).getSource().updateDimensions({'cx':mapCX, 'cy':mapCY})
+    pushURL();
+  });
 
 /*
-  fraktalLayer.on("prerender", function(evt) {
-      evt.context.imageSmoothingEnabled = false;
-      evt.context.webkitImageSmoothingEnabled = false;
-      evt.context.mozImageSmoothingEnabled = false;
-      evt.context.msImageSmoothingEnabled = false;
+  fraktalLayer.on("prerender", function(event) {
+      event.context.imageSmoothingEnabled = false;
+      event.context.webkitImageSmoothingEnabled = false;
+      event.context.mozImageSmoothingEnabled = false;
+      event.context.msImageSmoothingEnabled = false;
   });
 */
 
-  map.on("moveend", function(evt) {
+  map.on("moveend", function(event) {
     pushURL();
   });
 }
