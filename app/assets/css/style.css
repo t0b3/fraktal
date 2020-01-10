@@ -102,15 +102,17 @@ h3 {
   text-align: center;
 }
 
-#home-button {
+.ol-zoom-extent {
   position: absolute;
   left: 0.5em;
   top: 63px;
   background-color: rgba(255, 255, 255, 0.4) !important;
   backdrop-filter: blur(5px);
   border: 0 !important;
-  width: 27px;
-  height: 27px;
+  background-image: url("../images/home-icon.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 18px;
 }
 
 .caret-up {

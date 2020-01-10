@@ -33,6 +33,7 @@ function initializeMap() {
     matrixIds.push(i);
   }
 
+  // TODO: read layers and their params dynamically
   if(mapCX===undefined || mapCY===undefined) {
     var layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png";
   } else {
@@ -55,6 +56,7 @@ function initializeMap() {
         'cy': mapCY
       },
       format: 'image/png',
+      attributions: '<a target="new" href="https://localhost:8080/">fraktal</a>',
       requestEncoding: "REST"
     })
   })
@@ -78,9 +80,15 @@ function initializeMap() {
         }
       })
       .extend([
+        new ol.control.ZoomToExtent({
+          label: '',
+          extent: EXTENT
+        })
+      ])
+      .extend([
         new ol.control.MousePosition({
           coordinateFormat: ol.coordinate.createStringXY(16),
-          projection: 'EPSG:4326',
+//          projection: PROJECTION,
           // comment the following two lines to have the mouse position
           // be placed within the map.
           className: 'custom-mouse-position',
@@ -91,7 +99,8 @@ function initializeMap() {
       .extend([
         new ol.control.ScaleLine({
           target: document.getElementById("scale-line"),
-          units: "metric"
+          units: "metric",
+          minWidth: 128
         })
       ]),
     logo: false
@@ -260,13 +269,6 @@ function pushURL() {
 
   window.history.pushState({}, window.title, url);
 }
-
-function recenterMap() {
-  var view = map.getView();
-  view.setCenter([CENTER_X, CENTER_Y]);
-  view.setZoom(INITIAL_ZOOM);
-}
-
 
 initialize();
 
