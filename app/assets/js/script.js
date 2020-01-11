@@ -6,8 +6,10 @@ var MAX_RESOLUTION = Math.max(...RESOLUTIONS);
 var MAX_ZOOM = RESOLUTIONS.length-1;
 
 var EXTENT = [-16, -8, 16, 8];
-var PROJECTION = ol.proj.get("EPSG:4326");
-PROJECTION.setExtent(EXTENT);
+//var PROJECTION = ol.proj.get("EPSG:4326");
+//PROJECTION.setExtent(EXTENT);
+//var PROJECTION = new ol.proj.Projection({code:'0',units:'meters',extent:EXTENT,global:false,metersPerUnit:1,worldExtent:EXTENT});
+var PROJECTION = null;
 
 var CENTER_X = 0;
 var CENTER_Y = 0;
@@ -27,22 +29,23 @@ function initialize() {
     initializeMap();
 }
 
-function initializeMap() {
   var matrixIds = [];
   for (var i = 0; i < RESOLUTIONS.length; i++) {
     matrixIds.push(i);
   }
 
   // TODO: read layers and their params dynamically
-  if(mapCX===undefined || mapCY===undefined) {
-    var layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png";
-  } else {
-    var layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{cx}/{cy}/{TileMatrix}/{TileCol}/{TileRow}.png";
-  }
+  function getLayerURL() {
+    if(mapCX===undefined || mapCY===undefined) {
+      return layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png";
+    } else {
+      return layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{cx}/{cy}/{TileMatrix}/{TileCol}/{TileRow}.png";
+    }
+  };
 
   var fraktalLayer = new ol.layer.Tile({
     source: new ol.source.WMTS({
-      url: layerURL,
+      url: getLayerURL(),
       tileGrid: new ol.tilegrid.WMTS({
         origin: [CENTER_X,CENTER_Y],
         resolutions: RESOLUTIONS,
@@ -100,7 +103,7 @@ function initializeMap() {
         new ol.control.ScaleLine({
           target: document.getElementById("scale-line"),
           units: "metric",
-          minWidth: 128
+          minWidth: 256
         })
       ]),
     logo: false
