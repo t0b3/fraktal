@@ -1,5 +1,6 @@
 import os
 from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler
+from urllib import parse
 try:
     # with python >= 3.7 use multithreaded HTTPServer
     from http.server import ThreadingHTTPServer as HTTPServer
@@ -76,8 +77,37 @@ class MyHandler(SimpleHTTPRequestHandler):
 
         # serve WMS get image requests
         elif (self.path.startswith("/wms")):
-            # TODO: add WMS get image requests
-            self.send_error(501)
+            p = dict(parse.parse_qsl(parse.urlsplit(self.path).query))
+
+            def filter_neg_dict(d: dict, keys: list):
+                return {k: v for k, v in d.items() if k not in keys}
+            # TODO: implement service error handling
+            p = filter_neg_dict(p, ['SERVICE','VERSION','REQUEST'])
+            p = filter_neg_dict(p, ['FORMAT','TRANSPARENT','CRS'])
+
+            par = {"fractal": p["LAYERS"],
+                   "style": p["STYLES"],
+                   "width": int(p["WIDTH"]),
+                   "height": int(p["HEIGHT"])}
+            par["xmin"] = float(p["BBOX"].split(',')[0])
+            par["ymin"] = float(p["BBOX"].split(',')[1])
+            par["xmax"] = float(p["BBOX"].split(',')[2])
+            par["ymax"] = float(p["BBOX"].split(',')[3])
+            if (("CX" and "CY") in p.keys()):
+                par["c"] = complex(float(p["CX"]),
+                                   float(p["CY"]))
+
+            image = Drawing.generate_image_wms(par)
+            # serve image directly
+            self.send_response(200)
+            self.send_header("Content-type", "image/png")
+            self.end_headers()
+            f = io.BytesIO()
+            image.save(f, "PNG")
+            f.seek(0)
+            shutil.copyfileobj(f, self.wfile)
+            f.close()
+            image.close()
 
         # respond with failure to unexpected requests
         else:

@@ -30,6 +30,44 @@ def render_image(xmin: float, xmax: float, ymin: float, ymax: float, width: int,
 	image.putpalette(palette())
 	return image
 
+# generate WMS image
+def generate_image_wms(p: dict) -> Image.Image:
+
+	# p["fractal"]
+	# p["style"]
+	# p["width"]
+	# p["height"]
+	# p["xmin"]
+	# p["xmax"]
+	# p["ymin"]
+	# p["ymax"]
+	# and maybe
+	# p["c"]
+
+	# TODO: use smart choice for iterate_max
+	p["iterate_max"] = 2560
+
+	palette = palettes(p["iterate_max"])[p["style"]]
+
+	accepted_args = formulas[p["fractal"]]().get_parameters().keys()
+	# returns something like ('iterate_max', 'c')
+	p2 = filter_dict(p, accepted_args)
+	formula = formulas[p["fractal"]](**p2).calc_fractal
+
+	# calculate rendering parameters i.e. min-max coordinates
+	return render_image(xmin=p["xmin"],
+		xmax=p["xmax"],
+		ymin=p["ymin"],
+		ymax=p["ymax"],
+		width=p["width"],
+		height=p["height"],
+		palette=palette,
+		formula=formula)
+
+	print(p)
+	image: Image.Image = Image.new('P',(100,100))
+	return image
+
 
 # generate WMTS tile
 def generate_image_wmts_tile(p: dict) -> Image.Image:

@@ -64,6 +64,24 @@ function initialize() {
     })
   })
 
+  fraktalLayer2 = new ol.layer.Image({
+    extent: EXTENT,
+    source: new ol.source.ImageWMS({
+      url: "http://localhost:8080/wms/",
+      params: {
+        LAYERS: mapLayer,
+        FORMAT: "image/png",
+        STYLES: mapStyle,
+        VERSION: "1.3.0",
+        CX: mapCX,
+        CY: mapCY
+      },
+      serverType: "mapserver",
+      attributions: '<a target="new" href="https://localhost:8080/">fraktal</a>',
+    })
+  });
+
+function initializeMap() {
   map = new ol.Map({
     target: 'map',
     layers: [fraktalLayer],
