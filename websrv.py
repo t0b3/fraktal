@@ -8,7 +8,7 @@ except:
     from http.server import HTTPServer
 
 from fraktal import Drawing
-import shutil, io
+import shutil, io, platform
 
 
 class MyHandler(SimpleHTTPRequestHandler):
@@ -21,6 +21,13 @@ class MyHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         """Respond to a GET request."""
+        # Make the whole thing platform independent
+        operating_system = platform.system()
+        if operating_system == "Windows":
+            separator = "\\"
+        else:
+            separator = "/"
+
         # serve static index file
         if (self.path in ('/', '/favicon.ico')):
             self.path = '/srv' + self.path
@@ -42,7 +49,7 @@ class MyHandler(SimpleHTTPRequestHandler):
             else:
             # file does not exist: calculate
                 # parse input params
-                p = real_path.rstrip('.png').rsplit('wmts/')[-1].split('/')
+                p = real_path.rstrip('.png').rsplit('wmts'+separator)[-1].split(separator)
                 par = {"x_row": int(p[-2]),
                        "y_row": int(p[-1]),
                        "zoomlevel": int(p[-3]),
@@ -71,8 +78,8 @@ class MyHandler(SimpleHTTPRequestHandler):
                         #create basedir if not exists
                         os.makedirs(basedir)
                     image.save(real_path)
-                    if (verbose):
-                        print("image saved:", real_path)
+                    #if (verbose):
+                    #    print("image saved:", real_path)
                 image.close()
 
         # serve WMS get image requests
