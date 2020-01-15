@@ -27,6 +27,8 @@ var map;
 function initialize() {
     readURL();
     initializeMap();
+    handleLayerRowClicked(null, mapLayer);
+    handleStyleRowClicked(null, mapStyle);
 }
 
   var matrixIds = [];
