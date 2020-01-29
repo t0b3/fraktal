@@ -20,7 +20,7 @@ var mapY = CENTER_Y;
 var mapZoom = INITIAL_ZOOM;
 var mapLayer = "mandelbrot";
 var mapStyle = "default";
-var mapCX, mapCY;
+var mapCX = 0, mapCY = 0;
 
 var map;
 

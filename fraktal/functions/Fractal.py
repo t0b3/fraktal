@@ -13,6 +13,7 @@ class Mandelbrot(object):
 
     # return mandelbrot set i.e. depth values as matrix
     '''opencl implementation'''
+    # credits to opencl examples https://github.com/inducer/pyopencl/tree/master/examples/demo_mandelbrot.py#L38-L75
     def calc_fractal_opencl(self, q: np.ndarray) -> np.ndarray:
         ctx = cl.create_some_context()
         queue = cl.CommandQueue(ctx)
