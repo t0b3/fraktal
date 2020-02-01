@@ -20,9 +20,11 @@ var mapY = CENTER_Y;
 var mapZoom = INITIAL_ZOOM;
 var mapLayer = "mandelbrot";
 var mapStyle = "default";
-var mapCX = 0, mapCY = 0;
+var mapCX, mapCY;
 
 var map;
+var wmtsLayer;
+var wmsLayer;
 
 function initialize() {
     readURL();
@@ -31,21 +33,23 @@ function initialize() {
     handleStyleRowClicked(null, mapStyle);
 }
 
+function initializeMap() {
+
   var matrixIds = [];
   for (var i = 0; i < RESOLUTIONS.length; i++) {
     matrixIds.push(i);
   }
 
-  // TODO: read layers and their params dynamically
+  // TODO: read & build layers list and their params dynamically
   function getLayerURL() {
     if(mapCX===undefined || mapCY===undefined) {
       return layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png";
     } else {
-      return layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{cx}/{cy}/{TileMatrix}/{TileCol}/{TileRow}.png";
+      return layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{CX}/{CY}/{TileMatrix}/{TileCol}/{TileRow}.png";
     }
   };
 
-  var fraktalLayer = new ol.layer.Tile({
+  wmtsLayer = new ol.layer.Tile({
     source: new ol.source.WMTS({
       url: getLayerURL(),
       tileGrid: new ol.tilegrid.WMTS({
@@ -57,8 +61,8 @@ function initialize() {
       layer: mapLayer,
       style: mapStyle,
       dimensions: {
-        'cx': mapCX,
-        'cy': mapCY
+        'CX': mapCX,
+        'CY': mapCY
       },
       format: 'image/png',
       attributions: '<a target="new" href="https://localhost:8080/">fraktal</a>',
@@ -66,7 +70,7 @@ function initialize() {
     })
   })
 
-  fraktalLayer2 = new ol.layer.Image({
+  wmsLayer = new ol.layer.Image({
     extent: EXTENT,
     source: new ol.source.ImageWMS({
       url: "http://localhost:8080/wms/",
@@ -83,10 +87,9 @@ function initialize() {
     })
   });
 
-function initializeMap() {
   map = new ol.Map({
     target: 'map',
-    layers: [fraktalLayer],
+    layers: [wmtsLayer],
     view: new ol.View({
       center: [mapX, mapY],
       zoom: mapZoom,
@@ -135,14 +138,19 @@ function initializeMap() {
 */
   map.on('contextmenu', function(event) {
     event.preventDefault();
-    //console.log(event.coordinate);
     [mapCX, mapCY] = event.coordinate;
-    map.getLayers().item(0).getSource().updateDimensions({'cx':mapCX, 'cy':mapCY})
+    if(map.getLayers().item(0) == wmtsLayer) {
+    /* WMTS */
+      map.getLayers().item(0).getSource().updateDimensions({'CX': mapCX, 'CY': mapCY});
+    } else {
+    /* WMS */
+      map.getLayers().item(0).getSource().updateParams({'CX': mapCX, 'CY': mapCY});
+    }
     pushURL();
   });
 
 /*
-  fraktalLayer.on("prerender", function(event) {
+  wmtsLayer.on("prerender", function(event) {
       event.context.imageSmoothingEnabled = false;
       event.context.webkitImageSmoothingEnabled = false;
       event.context.mozImageSmoothingEnabled = false;
@@ -155,23 +163,33 @@ function initializeMap() {
   });
 }
 
-
 function handleLayerRowClicked(event, layerId) {
   mapLayer = layerId;
-  // dirty hack to change WMTS layer, update source and refresh tiles
-  map.getLayers().item(0).getSource().layer_ = layerId;
-  map.getLayers().item(0).getSource().setUrls(map.getLayers().item(0).getSource().getUrls());
-  map.getLayers().item(0).getSource().refresh();
+  if(map.getLayers().item(0) == wmtsLayer) {
+  /* WMTS */
+    // dirty hack to change WMTS layer, update source and refresh tiles
+    map.getLayers().item(0).getSource().layer_ = layerId;
+    map.getLayers().item(0).getSource().setUrls(map.getLayers().item(0).getSource().getUrls());
+    map.getLayers().item(0).getSource().refresh();
+  } else {
+  /* WMS */
+    map.getLayers().item(0).getSource().updateParams({'LAYERS': layerId});
+  }
   pushURL();
 }
 
-
 function handleStyleRowClicked(event, styleId) {
   mapStyle = styleId;
-  // dirty hack to change WMTS style, update source and refresh tiles
-  map.getLayers().item(0).getSource().style_ = styleId;
-  map.getLayers().item(0).getSource().setUrls(map.getLayers().item(0).getSource().getUrls());
-  map.getLayers().item(0).getSource().refresh();
+  if(map.getLayers().item(0) == wmtsLayer) {
+  /* WMTS */
+    // dirty hack to change WMTS style, update source and refresh tiles
+    map.getLayers().item(0).getSource().style_ = styleId;
+    map.getLayers().item(0).getSource().setUrls(map.getLayers().item(0).getSource().getUrls());
+    map.getLayers().item(0).getSource().refresh();
+  } else {
+  /* WMS */
+    map.getLayers().item(0).getSource().updateParams({'STYLES': styleId});
+  }
   pushURL();
 }
 

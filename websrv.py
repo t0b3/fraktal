@@ -47,8 +47,11 @@ class MyHandler(SimpleHTTPRequestHandler):
                        "style": p[1],
                        "fractal": p[0]}
                 if (len(p)==7):
-                    par["c"]=complex(float(p[2]),
-                                     float(p[3]))
+                    if (p[2]=='undefined'):
+                        par["c"]=0
+                    else:
+                        par["c"]=complex(float(p[2]),
+                                         float(p[3]))
 
                 image = Drawing.generate_image_wmts_tile(par)
 
