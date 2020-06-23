@@ -20,13 +20,15 @@ class MyHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         """Respond to a GET request."""
-        # serve static index file
-        if (self.path in ('/', '/favicon.ico')):
-            self.path = '/srv' + self.path
+        # serve static files
+        if (self.path in ('/', '/favicon.ico', '/manifest.json')):
+            self.path = '/app' + self.path
             super().do_GET()
-
-        # serve static app files
-        elif (self.path.startswith('/app')):
+        elif (self.path.startswith('/?')):
+            self.path = '/app' + self.path
+            super().do_GET()
+        elif (self.path.startswith('/assets')):
+            self.path = '/app' + self.path
             super().do_GET()
 
         # serve WMTS tile requests
