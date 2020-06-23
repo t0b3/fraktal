@@ -64,10 +64,6 @@ def generate_image_wms(p: dict) -> Image.Image:
 		palette=palette,
 		formula=formula)
 
-	print(p)
-	image: Image.Image = Image.new('P',(100,100))
-	return image
-
 
 # generate WMTS tile
 def generate_image_wmts_tile(p: dict) -> Image.Image:
