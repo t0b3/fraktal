@@ -43,9 +43,9 @@ function initializeMap() {
   // TODO: read & build layers list and their params dynamically
   function getLayerURL() {
     if(mapCX===undefined || mapCY===undefined) {
-      return layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png";
+      return layerURL = "/wmts/{Layer}/{Style}/{TileMatrix}/{TileCol}/{TileRow}.png";
     } else {
-      return layerURL = "http://localhost:8080/wmts/{Layer}/{Style}/{CX}/{CY}/{TileMatrix}/{TileCol}/{TileRow}.png";
+      return layerURL = "/wmts/{Layer}/{Style}/{CX}/{CY}/{TileMatrix}/{TileCol}/{TileRow}.png";
     }
   };
 
@@ -65,7 +65,7 @@ function initializeMap() {
         'CY': mapCY
       },
       format: 'image/png',
-      attributions: '<a target="new" href="https://localhost:8080/">fraktal</a>',
+      attributions: '<a target="new" href="/about/">fraktal</a>',
       requestEncoding: "REST"
     })
   })
@@ -73,7 +73,7 @@ function initializeMap() {
   wmsLayer = new ol.layer.Image({
     extent: EXTENT,
     source: new ol.source.ImageWMS({
-      url: "http://localhost:8080/wms/",
+      url: "/wms/",
       params: {
         LAYERS: mapLayer,
         FORMAT: "image/png",
@@ -83,7 +83,7 @@ function initializeMap() {
         CY: mapCY
       },
       serverType: "mapserver",
-      attributions: '<a target="new" href="https://localhost:8080/">fraktal</a>',
+      attributions: '<a target="new" href="/about/">fraktal</a>',
     })
   });
 
