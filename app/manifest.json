@@ -1,0 +1,20 @@
+{
+    "short_name": "Fraktal",
+    "name": "Fraktal Viewer",
+    "description": "an interactive fractal viewer for fractals of Mandelbrot and Julia",
+    "icons": [
+      {
+        "src": "assets/icon192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+      },
+      {
+        "src": "assets/icon512.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ],
+    "start_url": ".",
+    "background_color": "#000",
+    "display": "standalone"
+  }
