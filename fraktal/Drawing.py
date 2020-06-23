@@ -1,4 +1,5 @@
 import os
+from io import BytesIO
 from PIL import Image
 import numpy as np
 from fraktal.functions.Palette import palettes
@@ -30,8 +31,19 @@ def render_image(xmin: float, xmax: float, ymin: float, ymax: float, width: int,
 	image.putpalette(palette())
 	return image
 
+
+# image as png stream
+def image2png(image: Image) -> bytes:
+	f = BytesIO()
+	image.save(f, "PNG")
+	image.close()
+	png = f.getvalue()
+	f.close()
+	return png
+
+
 # generate WMS image
-def generate_image_wms(p: dict) -> Image.Image:
+def generate_image_wms(p: dict) -> bytes:
 
 	# p["fractal"]
 	# p["style"]
@@ -55,7 +67,7 @@ def generate_image_wms(p: dict) -> Image.Image:
 	formula = formulas[p["fractal"]](**p2).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
-	return render_image(xmin=p["xmin"],
+	img = render_image(xmin=p["xmin"],
 		xmax=p["xmax"],
 		ymin=p["ymin"],
 		ymax=p["ymax"],
@@ -64,9 +76,11 @@ def generate_image_wms(p: dict) -> Image.Image:
 		palette=palette,
 		formula=formula)
 
+	return image2png(img)
+
 
 # generate WMTS tile
-def generate_image_wmts_tile(p: dict) -> Image.Image:
+def generate_image_wmts_tile(p: dict) -> bytes:
 	BASERANGE_Y = 2.0
 	TILEWIDTH = 256
 	TILEHEIGHT = 256
@@ -101,7 +115,7 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 	formula = formulas[p["fractal"]](**p2).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
-	return render_image(xmin=p["x_row"] * x_range,
+	img = render_image(xmin=p["x_row"] * x_range,
 		xmax=(p["x_row"] + 1) * x_range,
 		ymin=(-p["y_row"] - 1) * y_range,
 		ymax=-p["y_row"] * y_range,
@@ -109,6 +123,8 @@ def generate_image_wmts_tile(p: dict) -> Image.Image:
 		height=TILEHEIGHT,
 		palette=palette,
 		formula=formula)
+
+	return image2png(img)
 
 
 # render image tile(s)

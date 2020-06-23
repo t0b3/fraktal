@@ -1,4 +1,4 @@
-import os, shutil, io
+import os
 from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler
 from urllib import parse
 try:
@@ -55,17 +55,13 @@ class MyHandler(SimpleHTTPRequestHandler):
                         par["c"]=complex(float(p[2]),
                                          float(p[3]))
 
-                image = Drawing.generate_image_wmts_tile(par)
+                png = Drawing.generate_image_wmts_tile(par)
 
                 # serve image directly
                 self.send_response(200)
                 self.send_header("Content-type", "image/png")
                 self.end_headers()
-                f = io.BytesIO()
-                image.save(f, "PNG")
-                f.seek(0)
-                shutil.copyfileobj(f, self.wfile)
-                f.close()
+                self.wfile.write(png)
 
                 # save image to WMTS cache (optionally)
                 if (self.cache):
@@ -73,10 +69,9 @@ class MyHandler(SimpleHTTPRequestHandler):
                     if not (os.path.isdir(basedir)):
                         #create basedir if not exists
                         os.makedirs(basedir)
-                    image.save(real_path)
-                    #if (verbose):
-                    #    print("image saved:", real_path)
-                image.close()
+                    filehandle = open(real_path, "wb")
+                    filehandle.write(png)
+                    filehandle.close()
 
         # serve WMS get image requests
         elif (self.path.startswith("/wms")):
@@ -100,17 +95,13 @@ class MyHandler(SimpleHTTPRequestHandler):
                 par["c"] = complex(float(p["CX"]),
                                    float(p["CY"]))
 
-            image = Drawing.generate_image_wms(par)
+            png = Drawing.generate_image_wms(par)
+
             # serve image directly
             self.send_response(200)
             self.send_header("Content-type", "image/png")
             self.end_headers()
-            f = io.BytesIO()
-            image.save(f, "PNG")
-            f.seek(0)
-            shutil.copyfileobj(f, self.wfile)
-            f.close()
-            image.close()
+            self.wfile.write(png)
 
         # respond with failure to unexpected requests
         else:
