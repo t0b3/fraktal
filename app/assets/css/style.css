@@ -120,6 +120,12 @@ h3 {
   font-size: 10px;
 }
 
+.share {
+  position: absolute;
+  left: 0.5em;
+  top: 116px;
+}
+
 .caret-up {
   height: 20px;
   width: 20px;

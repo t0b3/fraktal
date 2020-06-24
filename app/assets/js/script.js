@@ -31,6 +31,8 @@ function initialize() {
     initializeMap();
     handleLayerRowClicked(null, mapLayer);
     handleStyleRowClicked(null, mapStyle);
+    document.getElementById("share-mailto").addEventListener("click", ()=>{open("mailto:?subject=Fraktal&body="+encodeURIComponent(location.href))});
+    document.getElementById("share-qr").addEventListener("click", ()=>{open("https://chart.googleapis.com/chart?cht=qr&chs=180x180&choe=UTF-8&chld=L|1&chl="+encodeURIComponent(location.href))});
 }
 
 function initializeMap() {
