@@ -1,5 +1,5 @@
 import os
-from http.server import BaseHTTPRequestHandler, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
 from urllib import parse
 try:
     # with python >= 3.7 use multithreaded HTTPServer
@@ -20,14 +20,29 @@ class MyHandler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         """Respond to a GET request."""
+
+        def send_response(response, mimetype):
+            # serve image directly
+            self.send_response(200)
+            self.send_header("Content-type", mimetype)
+            self.end_headers()
+            self.wfile.write(response)
+
+        def save_to_file(content, filename):
+            basedir = os.path.dirname(filename)
+            if not (os.path.isdir(basedir)):
+                # create basedir if not exists
+                os.makedirs(basedir)
+            fh = open(filename, "wb")
+            fh.write(content)
+            fh.close()
+
         # serve static files
-        if (self.path in ('/', '/favicon.ico', '/manifest.json')):
-            self.path = '/app' + self.path
-            super().do_GET()
-        elif (self.path.startswith('/?')):
-            self.path = '/app' + self.path
-            super().do_GET()
-        elif (self.path.startswith('/assets')):
+        static_routes = (
+            self.path in ('/', '/favicon.ico', '/manifest.json'),
+            self.path.startswith('/?'),
+            self.path.startswith('/assets'))
+        if any(static_routes):
             self.path = '/app' + self.path
             super().do_GET()
 
@@ -57,21 +72,11 @@ class MyHandler(SimpleHTTPRequestHandler):
 
                 png = Drawing.generate_image_wmts_tile(par)
 
-                # serve image directly
-                self.send_response(200)
-                self.send_header("Content-type", "image/png")
-                self.end_headers()
-                self.wfile.write(png)
+                send_response(png, mimetype="image/png")
 
                 # save image to WMTS cache (optionally)
                 if (self.cache):
-                    basedir = os.path.dirname(real_path)
-                    if not (os.path.isdir(basedir)):
-                        #create basedir if not exists
-                        os.makedirs(basedir)
-                    filehandle = open(real_path, "wb")
-                    filehandle.write(png)
-                    filehandle.close()
+                    save_to_file(png, real_path)
 
         # serve WMS get image requests
         elif (self.path.startswith("/wms")):
@@ -97,11 +102,7 @@ class MyHandler(SimpleHTTPRequestHandler):
 
             png = Drawing.generate_image_wms(par)
 
-            # serve image directly
-            self.send_response(200)
-            self.send_header("Content-type", "image/png")
-            self.end_headers()
-            self.wfile.write(png)
+            send_response(png, mimetype="image/png")
 
         # respond with failure to unexpected requests
         else:
