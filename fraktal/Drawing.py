@@ -146,7 +146,9 @@ def generate_image_using_center_point(p: dict) -> Image.Image:
 	yrange = BASERANGE_Y / (2 ** p["zoomlevel"])
 	xrange = yrange * (p["width"] / p["height"])
 
-	p2 = filter_dict(p, ('iterate_max', 'c'))
+	accepted_args = formulas[p["fractal"]]().get_parameters().keys()
+	# returns something like ('iterate_max', 'c')
+	p2 = filter_dict(p, accepted_args)
 	formula = formulas[p["fractal"]](**p2).calc_fractal
 
 	# calculate rendering parameters i.e. min-max coordinates
