@@ -151,7 +151,20 @@ function initializeMap() {
     event.preventDefault();
     [mapCX, mapCY] = event.coordinate;
     if(map.getLayers().item(0) == wmtsLayer) {
-    /* WMTS */
+    // WMTS
+      map.getLayers().item(0).getSource().updateDimensions({'CX': mapCX, 'CY': mapCY});
+    } else {
+    // WMS
+      map.getLayers().item(0).getSource().updateParams({'CX': mapCX, 'CY': mapCY});
+    }
+    pushURL();
+  });
+
+//  document.getElementById('map').addEventListener('long-press', function(event) {
+  document.addEventListener('long-press', function(event) {
+    [mapCX, mapCY] = map.getCoordinateFromPixel([event.detail.clientX, event.detail.clientY]);
+    if(map.getLayers().item(0) == wmtsLayer) {
+    // WMTS
       map.getLayers().item(0).getSource().updateDimensions({'CX': mapCX, 'CY': mapCY});
     } else {
     // WMS
