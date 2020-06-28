@@ -123,7 +123,21 @@ h3 {
 .share {
   position: absolute;
   left: 0.5em;
-  top: 116px;
+  top: 8.4em;
+}
+
+#share-mailto {
+  background-image: url("../images/mail.svg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 70%;
+}
+
+#share-qr {
+  background-image: url("../images/qr.svg");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 70%;
 }
 
 .caret-up {
