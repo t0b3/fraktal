@@ -106,6 +106,7 @@ function initializeMap() {
     }),
     controls: ol.control
       .defaults({
+        rotate: false,
         attributionOptions: {
           collapsible: false
         }
@@ -134,6 +135,11 @@ function initializeMap() {
           minWidth: 256
         })
       ]),
+    interactions: ol.interaction
+      .defaults({
+        altShiftDragRotate:false,
+        pinchRotate:false
+      }),
     logo: false
   });
 /*
@@ -148,7 +154,7 @@ function initializeMap() {
     /* WMTS */
       map.getLayers().item(0).getSource().updateDimensions({'CX': mapCX, 'CY': mapCY});
     } else {
-    /* WMS */
+    // WMS
       map.getLayers().item(0).getSource().updateParams({'CX': mapCX, 'CY': mapCY});
     }
     pushURL();
