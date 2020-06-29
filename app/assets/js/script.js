@@ -152,6 +152,7 @@ function initializeMap() {
     [mapCX, mapCY] = event.coordinate;
     if(map.getLayers().item(0) == wmtsLayer) {
     // WMTS
+      map.getLayers().item(0).getSource().setUrl(getLayerURL());
       map.getLayers().item(0).getSource().updateDimensions({'CX': mapCX, 'CY': mapCY});
     } else {
     // WMS
@@ -165,6 +166,7 @@ function initializeMap() {
     [mapCX, mapCY] = map.getCoordinateFromPixel([event.detail.clientX, event.detail.clientY]);
     if(map.getLayers().item(0) == wmtsLayer) {
     // WMTS
+      map.getLayers().item(0).getSource().setUrl(getLayerURL());
       map.getLayers().item(0).getSource().updateDimensions({'CX': mapCX, 'CY': mapCY});
     } else {
     // WMS
