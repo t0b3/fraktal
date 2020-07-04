@@ -6,11 +6,7 @@ from fraktal import Drawing
 app = Flask(__name__)
 
 
-@app.route('/')
-def index():
-    return send_from_directory('app', 'index.html')
-
-
+@app.route('/', defaults={'filename': 'index.html'})
 @app.route('/<path:filename>')
 def srv_app(filename):
     return send_from_directory('app', filename)
