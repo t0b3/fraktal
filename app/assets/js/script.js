@@ -161,8 +161,8 @@ function initializeMap() {
     pushURL();
   });
 
-//  document.getElementById('map').addEventListener('long-press', function(event) {
-  document.addEventListener('long-press', function(event) {
+  document.getElementById('map').setAttribute('data-long-press-delay', '500');
+  document.getElementById('map').addEventListener('long-press', function(event) {
     [mapCX, mapCY] = map.getCoordinateFromPixel([event.detail.clientX, event.detail.clientY]);
     if(map.getLayers().item(0) == wmtsLayer) {
     // WMTS
