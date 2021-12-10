@@ -1,11 +1,7 @@
 import os
 from http.server import SimpleHTTPRequestHandler
 from urllib import parse
-try:
-    # with python >= 3.7 use multithreaded HTTPServer
-    from http.server import ThreadingHTTPServer as HTTPServer
-except:
-    from http.server import HTTPServer
+from http.server import ThreadingHTTPServer as HTTPServer
 
 from fraktal import Drawing
 
