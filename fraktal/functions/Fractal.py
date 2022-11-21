@@ -25,7 +25,7 @@ class Mandelbrot(object):
         prg = cl.Program(ctx, """//CL//
         #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
         #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-        __kernel void mandelbrot(__global double2 *q,
+        __kernel void mandelbrot(__global double2 const *q,
                          __global uint *output, uint const maxiter)
         {
             int gid = get_global_id(0);
@@ -87,7 +87,7 @@ class Julia(Mandelbrot):
         prg = cl.Program(ctx, """//CL//
         #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
         #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-        __kernel void julia(__global double2 *q,
+        __kernel void julia(__global double2 const *q,
                          __global uint *output, uint const maxiter, double2 const c)
         {
             int gid = get_global_id(0);
@@ -151,7 +151,7 @@ class Mandelbrot4(Mandelbrot):
         prg = cl.Program(ctx, """//CL//
         #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
         #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-        __kernel void mandelbrot(__global double2 *q,
+        __kernel void mandelbrot(__global double2 const *q,
                          __global uint *output, uint const maxiter)
         {
             int gid = get_global_id(0);
@@ -214,7 +214,7 @@ class Julia4(Julia):
         prg = cl.Program(ctx, """//CL//
         #pragma OPENCL EXTENSION cl_khr_byte_addressable_store : enable
         #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-        __kernel void julia(__global double2 *q,
+        __kernel void julia(__global double2 const *q,
                          __global uint *output, uint const maxiter, double2 const c)
         {
             int gid = get_global_id(0);
