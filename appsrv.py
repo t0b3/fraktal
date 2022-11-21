@@ -9,7 +9,9 @@ app = Flask(__name__)
 @app.route('/', defaults={'filename': 'index.html'})
 @app.route('/<path:filename>')
 def srv_app(filename):
-    return send_from_directory('app', filename)
+    resp = send_from_directory('app', filename)
+    resp.access_control_allow_origin='*'
+    return resp
 
 
 @app.route('/wmts/<path:path>')
@@ -29,7 +31,10 @@ def wmts(path):
 
     png = Drawing.generate_image_wmts_tile(par)
 
-    return Response(png, mimetype='image/png')
+    resp = Response(png, mimetype='image/png')
+    resp.access_control_allow_origin='*'
+    return resp
+
 
 
 @app.route('/wms/')
@@ -53,7 +58,9 @@ def wms():
 
     png = Drawing.generate_image_wms(par)
 
-    return Response(png, mimetype='image/png')
+    resp = Response(png, mimetype='image/png')
+    resp.access_control_allow_origin='*'
+    return resp
 
 
 if __name__ == "__main__":

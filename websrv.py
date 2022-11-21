@@ -20,7 +20,8 @@ class MyHandler(SimpleHTTPRequestHandler):
         def send_response(response, mimetype):
             # serve image directly
             self.send_response(200)
-            self.send_header("Content-type", mimetype)
+            self.send_header("content-type", mimetype)
+            self.send_header("access-control-allow-origin", "*")
             self.end_headers()
             self.wfile.write(response)
 
