@@ -1,19 +1,19 @@
-var RESOLUTIONS = [];
-for (var i = -7; i > -53; i--) {
+const RESOLUTIONS = [];
+for (let i = -7; i > -53; i--) {
   RESOLUTIONS.push(2**i);
 }
-var MAX_RESOLUTION = Math.max(...RESOLUTIONS);
-var MAX_ZOOM = RESOLUTIONS.length-1;
+const MAX_RESOLUTION = Math.max(...RESOLUTIONS);
+const MAX_ZOOM = RESOLUTIONS.length-1;
 
-var EXTENT = [-16, -8, 16, 8];
+const EXTENT = [-16, -8, 16, 8];
 //var PROJECTION = ol.proj.get("EPSG:4326");
 //PROJECTION.setExtent(EXTENT);
 //var PROJECTION = new ol.proj.Projection({code:'0',units:'meters',extent:EXTENT,global:false,metersPerUnit:1,worldExtent:EXTENT});
-var PROJECTION = null;
+const PROJECTION = null;
 
-var CENTER_X = 0;
-var CENTER_Y = 0;
-var INITIAL_ZOOM = 0;
+const CENTER_X = 0;
+const CENTER_Y = 0;
+const INITIAL_ZOOM = 0;
 
 var mapX = CENTER_X;
 var mapY = CENTER_Y;
@@ -143,8 +143,8 @@ ol.control.ScaleLine.prototype.updateElement_ = function () {
 
 function initializeMap() {
 
-  var matrixIds = [];
-  for (var i = 0; i < RESOLUTIONS.length; i++) {
+  const matrixIds = [];
+  for (let i = 0; i < RESOLUTIONS.length; i++) {
     matrixIds.push(i);
   }
 
@@ -324,8 +324,8 @@ function handleStyleRowClicked(event, styleId) {
 
 
 function handleLayersTitleClick() {
-  var layersBody = document.getElementById("layers-body");
-  var caret = document.getElementById("layers-caret");
+  const layersBody = document.getElementById("layers-body");
+  const caret = document.getElementById("layers-caret");
 
   layersBody.classList.toggle("hidden");
   caret.classList.toggle("caret-up");
@@ -334,8 +334,8 @@ function handleLayersTitleClick() {
 
 
 function handleStylesTitleClick() {
-  var stylesBody = document.getElementById("styles-body");
-  var caret = document.getElementById("styles-caret");
+  const stylesBody = document.getElementById("styles-body");
+  const caret = document.getElementById("styles-caret");
 
   stylesBody.classList.toggle("hidden");
   caret.classList.toggle("caret-up");
@@ -353,55 +353,55 @@ function handleStylesTitleClick() {
  * - zoom {Number} the zoom level of the map
  */
 function readURL() {
-  var searchParams = new URLSearchParams(location.search);
+  const searchParams = new URLSearchParams(location.search);
 
   if (searchParams.has("x")) {
-    var x = parseFloat(searchParams.get("x"));
+    const x = parseFloat(searchParams.get("x"));
     if (!Number.isNaN(x)) {
       mapX = x;
     }
   }
 
   if (searchParams.has("y")) {
-    var y = parseFloat(searchParams.get("y"));
+    const y = parseFloat(searchParams.get("y"));
     if (!Number.isNaN(y)) {
       mapY = y;
     }
   }
 
   if (searchParams.has("zoom")) {
-    var zoom = parseFloat(searchParams.get("zoom"));
+    const zoom = parseFloat(searchParams.get("zoom"));
     if (!Number.isNaN(zoom)) {
       mapZoom = zoom;
     }
   }
 
   if (searchParams.has("cx")) {
-    var cx = parseFloat(searchParams.get("cx"));
+    const cx = parseFloat(searchParams.get("cx"));
     if (!Number.isNaN(cx)) {
       mapCX = cx;
     }
   }
 
   if (searchParams.has("cy")) {
-    var cy = parseFloat(searchParams.get("cy"));
+    const cy = parseFloat(searchParams.get("cy"));
     if (!Number.isNaN(cy)) {
       mapCY = cy;
     }
   }
 
   if (searchParams.has("formula")) {
-    var formula = searchParams.get("formula").toLowerCase();
+    const formula = searchParams.get("formula").toLowerCase();
     mapLayer = formula;
   }
 
   if (searchParams.has("style")) {
-    var style = searchParams.get("style").toLowerCase();
+    const style = searchParams.get("style").toLowerCase();
     mapStyle = style;
   }
 
   if (map && map.getView()) {
-    var view = map.getView();
+    const view = map.getView();
     view.setCenter([mapX, mapY]);
     view.setZoom(mapZoom);
   }
@@ -411,9 +411,9 @@ function readURL() {
  * Generate the URL search params for the current view and push it to the window history
  */
 function pushURL() {
-  var baseUrl = location.protocol + "//" + location.host + location.pathname;
+  const baseUrl = location.protocol + "//" + location.host + location.pathname;
 
-  var searchParams = new URLSearchParams();
+  const searchParams = new URLSearchParams();
 
   mapX = map.getView().getCenter()[0];
   mapY = map.getView().getCenter()[1];
@@ -433,9 +433,7 @@ function pushURL() {
   searchParams.set("formula", mapLayer);
   searchParams.set("style", mapStyle);
 
-  var parameter = "?" + searchParams.toString();
-
-  var url = baseUrl + parameter;
+  const url = baseUrl + "?" + searchParams.toString();
 
   window.history.pushState({}, window.title, url);
 }
