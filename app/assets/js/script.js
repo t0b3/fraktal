@@ -38,6 +38,109 @@ function initialize() {
     }
 }
 
+
+// override ol.control.ScaleLine class with custom updateElement method
+ol.control.ScaleLine.prototype.updateElement_ = function () {
+  const DEFAULT_DPI = 25.4 / 0.28;
+  const LEADING_DIGITS = [1, 2, 5];
+
+  const viewState = this.viewState_;
+
+  if (!viewState) {
+    if (this.renderedVisible_) {
+      this.element.style.display = 'none';
+      this.renderedVisible_ = false;
+    }
+    return;
+  }
+
+  let pointResolution = ol.proj.getPointResolution(
+    viewState.projection,
+    viewState.resolution,
+    viewState.center,
+    'm',
+  );
+
+  const minWidth =
+    (this.minWidth_ * (this.dpi_ || DEFAULT_DPI)) / DEFAULT_DPI;
+
+  const maxWidth =
+    this.maxWidth_ !== undefined
+      ? (this.maxWidth_ * (this.dpi_ || DEFAULT_DPI)) / DEFAULT_DPI
+      : undefined;
+
+  let nominalCount = minWidth * pointResolution;
+  nominalCount *= 1.1; // compensate rounding issue;
+  let suffix;
+  if (nominalCount < 1e-12) {
+    suffix = ' &centerdot; 10<sup>-15</sup>';
+    pointResolution *= 1e15;
+  } else if (nominalCount < 1e-9) {
+    suffix = ' &centerdot; 10<sup>-12</sup>';
+    pointResolution *= 1e12;
+  } else if (nominalCount < 1e-6) {
+    suffix = ' &centerdot; 10<sup>-9</sup>';
+    pointResolution *= 1e9;
+  } else if (nominalCount < 0.001) {
+    suffix = ' &centerdot; 10<sup>-6</sup>';
+    pointResolution *= 1000000;
+  } else if (nominalCount < 1) {
+    suffix = ' &centerdot; 10<sup>-3</sup>';
+    pointResolution *= 1000;
+  } else if (nominalCount < 1000) {
+    suffix = '';
+  } else {
+    suffix = ' &centerdot; 10<sup>3</sup>';
+    pointResolution /= 1000;
+  }
+
+  let i = 3 * Math.floor(Math.log(minWidth * pointResolution) / Math.log(10));
+  let count, width, decimalCount;
+  let previousCount, previousWidth, previousDecimalCount;
+  while (true) {
+    decimalCount = Math.floor(i / 3);
+    const decimal = Math.pow(10, decimalCount);
+    count = LEADING_DIGITS[((i % 3) + 3) % 3] * decimal;
+    width = Math.round(count / pointResolution);
+    if (isNaN(width)) {
+      this.element.style.display = 'none';
+      this.renderedVisible_ = false;
+      return;
+    }
+    if (maxWidth !== undefined && width >= maxWidth) {
+      count = previousCount;
+      width = previousWidth;
+      decimalCount = previousDecimalCount;
+      break;
+    } else if (width >= minWidth) {
+      break;
+    }
+    previousCount = count;
+    previousWidth = width;
+    previousDecimalCount = decimalCount;
+    ++i;
+  }
+  const html = this.scaleBar_
+    ? this.createScaleBar(width, count, suffix)
+    : count.toFixed(decimalCount < 0 ? -decimalCount : 0) + ' ' + suffix;
+
+  if (this.renderedHTML_ != html) {
+    this.innerElement_.innerHTML = html;
+    this.renderedHTML_ = html;
+  }
+
+  if (this.renderedWidth_ != width) {
+    this.innerElement_.style.width = width + 'px';
+    this.renderedWidth_ = width;
+  }
+
+  if (!this.renderedVisible_) {
+    this.element.style.display = '';
+    this.renderedVisible_ = true;
+  }
+}
+
+
 function initializeMap() {
 
   var matrixIds = [];
@@ -105,7 +208,7 @@ function initializeMap() {
       constrainResolution: true
     }),
     controls: ol.control
-      .defaults({
+      .defaults.defaults({
         rotate: false,
         attributionOptions: {
           collapsible: false
@@ -136,7 +239,7 @@ function initializeMap() {
         })
       ]),
     interactions: ol.interaction
-      .defaults({
+      .defaults.defaults({
         altShiftDragRotate:false,
         pinchRotate:false
       }),
