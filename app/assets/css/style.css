@@ -6,6 +6,33 @@ body {
   font-size: 12pt;
 }
 
+/* The Modal (background) */
+.modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100vw; /* Full width */
+  height: 100vh; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  backdrop-filter: blur(3px); /* Blur background */
+}
+
+/* Modal Content */
+.modal-content {
+  position: relative;
+  top: 50vh;
+  transform: translate(0, -50%);
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 20px;
+  width: fit-content;
+}
+
 #map {
   height: calc(100vh);
 }

@@ -26,13 +26,18 @@ var map;
 var wmtsLayer;
 var wmsLayer;
 
+var qrcode = new QRCode("qrcode");
+
 function initialize() {
     readURL();
     initializeMap();
     handleLayerRowClicked(null, mapLayer);
     handleStyleRowClicked(null, mapStyle);
+
+    const modal = document.getElementById("modal");
     document.getElementById("share-mailto").addEventListener("click", ()=>{open("mailto:?subject=Fraktal&body="+encodeURIComponent(location.href))});
-    document.getElementById("share-qr").addEventListener("click", ()=>{open("https://chart.googleapis.com/chart?cht=qr&chs=180x180&choe=UTF-8&chld=L|1&chl="+encodeURIComponent(location.href))});
+    document.getElementById("share-qr").addEventListener("click", ()=>{qrcode.makeCode(location.href); modal.classList.toggle("hidden");});
+    window.addEventListener("click", (event)=>{if (event.target == modal){modal.classList.toggle("hidden")};});
     if ('ontouchstart' in window) {
         document.getElementById("ol-touch").classList.toggle("ol-touch")
     }
