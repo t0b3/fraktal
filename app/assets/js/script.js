@@ -5,11 +5,10 @@ for (let i = -7; i > -53; i--) {
 const MAX_RESOLUTION = Math.max(...RESOLUTIONS);
 const MAX_ZOOM = RESOLUTIONS.length-1;
 
-const EXTENT = [-16, -8, 16, 8];
-//var PROJECTION = ol.proj.get("EPSG:4326");
-//PROJECTION.setExtent(EXTENT);
-//var PROJECTION = new ol.proj.Projection({code:'0',units:'meters',extent:EXTENT,global:false,metersPerUnit:1,worldExtent:EXTENT});
-const PROJECTION = null;
+const EXTENT = [-14, -6, 14, 6];
+const PROJECTION = new ol.proj.Projection({code:'0',units:'meters',extent:EXTENT,global:false,metersPerUnit:1,worldExtent:EXTENT});
+PROJECTION.setExtent(EXTENT);
+// const PROJECTION = null;
 
 const CENTER_X = 0;
 const CENTER_Y = 0;
@@ -37,7 +36,7 @@ function initialize() {
     const modal = document.getElementById("modal");
     document.getElementById("share-mailto").addEventListener("click", ()=>{open("mailto:?subject=Fraktal&body="+encodeURIComponent(location.href))});
     document.getElementById("share-qr").addEventListener("click", ()=>{qrcode.makeCode(location.href); modal.classList.toggle("hidden");});
-    window.addEventListener("click", (event)=>{if (event.target == modal){modal.classList.toggle("hidden")};});
+    document.getElementById("modal").addEventListener("click", ()=>{qrcode.makeCode(location.href); modal.classList.toggle("hidden");});
     if ('ontouchstart' in window) {
         document.getElementById("ol-touch").classList.toggle("ol-touch")
     }
@@ -170,7 +169,7 @@ function initializeMap() {
         resolutions: RESOLUTIONS,
         matrixIds: matrixIds
       }),
-      projection: PROJECTION,
+      // projection: PROJECTION,
       layer: mapLayer,
       style: mapStyle,
       dimensions: {
@@ -184,7 +183,7 @@ function initializeMap() {
   })
 
   wmsLayer = new ol.layer.Image({
-    extent: EXTENT,
+    // extent: EXTENT,
     source: new ol.source.ImageWMS({
       url: "/wms/",
       params: {
@@ -214,7 +213,7 @@ function initializeMap() {
     }),
     controls: ol.control
       .defaults.defaults({
-        rotate: false,
+        // rotate: false,
         attributionOptions: {
           collapsible: false
         }
@@ -222,15 +221,13 @@ function initializeMap() {
       .extend([
         new ol.control.ZoomToExtent({
           label: '',
-          extent: EXTENT
+          // extent: EXTENT
         })
       ])
       .extend([
         new ol.control.MousePosition({
           coordinateFormat: ol.coordinate.createStringXY(16),
-//          projection: PROJECTION,
-          // comment the following two lines to have the mouse position
-          // be placed within the map.
+          // projection: PROJECTION,
           className: 'custom-mouse-position',
           target: document.getElementById('mouse-position'),
           undefinedHTML: '&nbsp;'
@@ -239,7 +236,7 @@ function initializeMap() {
       .extend([
         new ol.control.ScaleLine({
           target: document.getElementById("scale-line"),
-          units: "metric",
+          // units: "metric",
           minWidth: 256
         })
       ]),
@@ -248,15 +245,19 @@ function initializeMap() {
         altShiftDragRotate:false,
         pinchRotate:false
       }),
-    logo: false
+    // logo: false
   });
+
 /*
   map.on('pointermove', function(event) {
     //console.log(event.coordinate);
   });
 */
-  map.on('contextmenu', function(event) {
+
+  document.getElementById('map').setAttribute('data-long-press-delay', '500');
+  map.on(['contextmenu', 'long-press'], function(event) {
     event.preventDefault();
+    // [mapCX, mapCY] = event?.coordinate ?? map.getCoordinateFromPixel([event.detail.clientX, event.detail.clientY]);
     [mapCX, mapCY] = event.coordinate;
     if(map.getLayers().item(0) == wmtsLayer) {
     // WMTS
@@ -269,19 +270,18 @@ function initializeMap() {
     pushURL();
   });
 
-  document.getElementById('map').setAttribute('data-long-press-delay', '500');
-  document.getElementById('map').addEventListener('long-press', function(event) {
-    [mapCX, mapCY] = map.getCoordinateFromPixel([event.detail.clientX, event.detail.clientY]);
-    if(map.getLayers().item(0) == wmtsLayer) {
-    // WMTS
-      map.getLayers().item(0).getSource().setUrl(getLayerURL());
-      map.getLayers().item(0).getSource().updateDimensions({'CX': mapCX, 'CY': mapCY});
-    } else {
-    // WMS
-      map.getLayers().item(0).getSource().updateParams({'CX': mapCX, 'CY': mapCY});
-    }
-    pushURL();
-  });
+  // map.on('long-press', function(event) {
+  //   [mapCX, mapCY] = map.getCoordinateFromPixel([event.detail.clientX, event.detail.clientY]);
+  //   if(map.getLayers().item(0) == wmtsLayer) {
+  //   // WMTS
+  //     map.getLayers().item(0).getSource().setUrl(getLayerURL());
+  //     map.getLayers().item(0).getSource().updateDimensions({'CX': mapCX, 'CY': mapCY});
+  //   } else {
+  //   // WMS
+  //     map.getLayers().item(0).getSource().updateParams({'CX': mapCX, 'CY': mapCY});
+  //   }
+  //   pushURL();
+  // });
 
 /*
   wmtsLayer.on("prerender", function(event) {
